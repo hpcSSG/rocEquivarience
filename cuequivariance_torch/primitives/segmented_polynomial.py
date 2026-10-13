@@ -44,10 +44,10 @@ except ImportError:
 import time
 #from mace.tools.scatter import scatter_sum
 
-from fasteq.ops.so3_linear import fast_equi_linear
+#from fasteq.ops.so3_linear import fast_equi_linear
 from fasteq.ops.fctp import fast_fctp
 from fasteq.ops.uniform1d_jit import fast_uniform1d_jit
-from fasteq.ops.stc import fast_stc_uniform1d_jit
+from fasteq.ops.stc_uniform1d_jit import fast_stc_uniform1d_jit
 
 
 import math
@@ -617,7 +617,7 @@ class SegmentedPolynomial(nn.Module):
         output_dtype_map: List[int] = None,
         name: str = "segmented_polynomial",
         op_name: str = "",
-        use_fasteq: Optional[bool] = None,
+        use_fasteq: bool = True,
         u1d_compatible: bool = False,
     ):
         super().__init__()
@@ -677,7 +677,7 @@ class SegmentedPolynomial(nn.Module):
         else:
             raise ValueError(f"Invalid method: {method}")
 
-        if use_fasteq and (op_name == "stc"):
+        if use_fasteq and op_name == "stc" and self.method == "uniform_1d":
             ds_ = [flatten_stp(d) for _, d in polynomial.operations]
             d_max = max(ds_, key=lambda d: d.num_operands)
             self.num_out_segments = d_max.operands[-1].num_segments
@@ -853,6 +853,7 @@ class SegmentedPolynomial(nn.Module):
                         inputs, input_indices, output_shapes, output_indices
                     )
         out = [torch.empty(0) for _ in range(self.num_outputs)]
+        #print(f"=========== use fasteq: {self.use_fasteq}, op name: {self.op_name} ==============")
         if self.use_fasteq:
             if self.op_name == "equi_linear":
                 if self.num_outputs != 1:
@@ -876,7 +877,7 @@ class SegmentedPolynomial(nn.Module):
                 )
                 
                 out[0] = ref
-            elif self.op_name == "cwtp" and self.method == "uniform_1d":
+            elif self.method == "uniform_1d":
                 
                 w = inputs[0]
                 x = inputs[1]
