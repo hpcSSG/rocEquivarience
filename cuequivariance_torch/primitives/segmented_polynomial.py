@@ -708,7 +708,7 @@ class SegmentedPolynomial(nn.Module):
             )
             #print(f"stc meta:{self.stc_meta}")
         
-        elif use_fasteq and self.op_name == "cwtp" and self.method == "uniform_1d":
+        elif use_fasteq and (self.op_name == "cwtp" or self.method == "uniform_1d"):
 
             self.descriptor = self.m.polynomial.operations[0][1]
             print(f"uniform1d path, descriptor:{self.descriptor}")
@@ -719,14 +719,11 @@ class SegmentedPolynomial(nn.Module):
             self.path_coefficients = sum((d.stacked_coefficients.tolist() for d in ds_), [])
             self.num_segments_list = [ operand.num_segments for operand in self.descriptor.operands]
             self.size_list = [ operand.size for operand in self.descriptor.operands]
-            #print(f"path_segment_indices len:{len(self.path_segment_indices)}, {self.path_segment_indices}")
-            #print(f"len:{len(self.path_coefficients)}, path_coefficients:{self.path_coefficients}")
 
             path_segment_indices_tensor = torch.tensor(self.path_indices, dtype=torch.int32, device="cuda")
             path_coefficients_tensor = torch.tensor(self.path_coefficients, dtype=math_dtype, device="cuda")
             u_dim = list(self.descriptor.get_dims("u"))[0]
             w_seg_num, x_seg_num, y_seg_num, out_seg_num = self.num_segments_list[0], self.num_segments_list[1], self.num_segments_list[2], self.num_segments_list[3]
-            #i_list, j_list, k_list, v_list, coeff_list, v_offsets = build_grouped_paths(path_segment_indices_tensor, path_coefficients_tensor, out_seg_num, "cuda")
             build_grouped_paths_as_buffers(self, path_segment_indices_tensor, path_coefficients_tensor, out_seg_num, device="cuda", persistent=False)
             self.u1d_meta = {}
 
