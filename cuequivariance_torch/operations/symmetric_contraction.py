@@ -16,7 +16,6 @@
 import os
 import warnings
 from typing import Optional
-import time
 
 import torch
 from cuequivariance.group_theory.experimental.mace.symmetric_contractions import (
@@ -127,7 +126,7 @@ class SymmetricContraction(torch.nn.Module):
         original_mace: bool = False,
         use_fallback: Optional[bool] = None,
         method: Optional[str] = None,
-        use_fasteq: bool = True,
+        use_fasteq: bool = False,
     ):
         super().__init__()
 
@@ -220,34 +219,45 @@ class SymmetricContraction(torch.nn.Module):
             in {"1", "true", "yes", "on"}
         )
         
+        # Define the reference backend explicitly; its public default may
+        # otherwise enable FastEq preprocessing.
+        self.f = cuet.SegmentedPolynomial(
+            self.etp.polynomial,
+            method=self.method,
+            math_dtype=math_dtype,
+            use_fasteq=False,
+            op_name="stc",
+        ).to(device)
+
         if self.use_fasteq:
             self.ff = cuet.SegmentedPolynomial(
                 self.etp.polynomial,
                 method=self.method,
                 math_dtype=math_dtype,
                 use_fasteq=True,
-                op_name="stc", # symmetric contraction
+                op_name="stc",
             ).to(device)
+        else:
+            self.ff = self.f
 
-            if self.fast_inference:
-                self.register_buffer("project_weight",
-                                    torch.empty(0, device=device, dtype=dtype),
-                                    persistent=False)
-                
-                # 加载state_dict之后自动重算
-                self._update_project_weight_()
-                self.register_load_state_dict_post_hook(self._on_post_load)
+        # TorchScript requires this attribute even when the eager cache is off.
+        self.register_buffer(
+            "project_weight",
+            torch.empty(0, device=device, dtype=dtype),
+            persistent=False,
+        )
+        if self.fast_inference:
+            self._update_project_weight_()
+            self.register_load_state_dict_post_hook(self._on_post_load)
 
-        self.f = cuet.SegmentedPolynomial(
-            self.etp.polynomial,
-            method=self.method,
-            math_dtype=math_dtype,
-            op_name="stc", # symmetric contraction
-        ).to(device)
-    
     @torch.no_grad()
     def _update_project_weight_(self):
-        proj = torch.einsum("zau,ab->zbu", self.weight.data, self.projection).flatten(1)
+        projection = self.projection
+        if projection is None:
+            raise RuntimeError("Projected-weight caching requires original_mace=True")
+        proj = torch.einsum(
+            "zau,ab->zbu", self.weight.detach(), projection
+        ).flatten(1)
         self.project_weight.resize_(proj.shape)
         self.project_weight.copy_(proj)
 
@@ -276,45 +286,33 @@ class SymmetricContraction(torch.nn.Module):
         Returns:
             torch.Tensor: The output tensor. It has shape (batch, irreps_out.dim).
         """
-        #print(f"STC weight shape: {self.weight.shape}, x shape: {x.shape}, indices shape: {indices.shape}")
+        x = self.transpose_in(x)
 
-        print(f"fast_inference:{self.fast_inference}, use_fasteq:{self.use_fasteq}")
-        if self.fast_inference:
-
-            #torch.cuda.synchronize()
-            #start_time = time.perf_counter() * 1000
-
-            weight = self.project_weight
-            output = self.ff([weight, self.transpose_in(x)], input_indices={0: indices})
-            
-            #torch.cuda.synchronize()
-            #end_time = time.perf_counter() * 1000
-            #execution_time_ms = end_time - start_time
-            #print(f"<< fasteq stc fast forward cost: {execution_time_ms:.3f} ms >>")
-        
-        elif self.use_fasteq:
-            if self.projection is not None:
-                weight = torch.einsum("zau,ab->zbu", self.weight, self.projection)
+        if torch.jit.is_scripting():
+            # Recompute from the current parameter instead of exporting a
+            # detached inference cache. Preserve the differentiable path.
+            projection = self.projection
+            if projection is not None:
+                weight = torch.einsum("zau,ab->zbu", self.weight, projection)
             else:
                 weight = self.weight
-            weight = weight.flatten(1)
-            output = self.ff([weight, self.transpose_in(x)], input_indices={0: indices})
-
+            output = self.f(
+                [weight.flatten(1), x], input_indices={0: indices}
+            )
         else:
-
-            """ torch.cuda.synchronize()
-            start_time = time.perf_counter() * 1000 """
-
-            if self.projection is not None:
-                weight = torch.einsum("zau,ab->zbu", self.weight, self.projection)
+            if self.fast_inference:
+                weight = self.project_weight
+                output = self.ff([weight, x], input_indices={0: indices})
             else:
-                weight = self.weight
-            weight = weight.flatten(1)
-            output = self.f([weight, self.transpose_in(x)], input_indices={0: indices})
+                projection = self.projection
+                if projection is not None:
+                    weight = torch.einsum("zau,ab->zbu", self.weight, projection)
+                else:
+                    weight = self.weight
+                weight = weight.flatten(1)
+                if self.use_fasteq:
+                    output = self.ff([weight, x], input_indices={0: indices})
+                else:
+                    output = self.f([weight, x], input_indices={0: indices})
 
-            """ torch.cuda.synchronize()
-            end_time = time.perf_counter() * 1000
-            execution_time_ms = end_time - start_time
-            print(f"<< cueq stc forward cost: {execution_time_ms:.3f} ms >>") """
-        
         return self.transpose_out(output[0])

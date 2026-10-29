@@ -75,7 +75,7 @@ class ChannelWiseTensorProduct(torch.nn.Module):
         math_dtype: Optional[str | torch.dtype] = None,
         use_fallback: Optional[bool] = None,
         method: Optional[str] = None,
-        use_fasteq: bool = True,
+        use_fasteq: bool = False,
     ):
         super().__init__()
         irreps_in1, irreps_in2 = default_irreps(irreps_in1, irreps_in2)

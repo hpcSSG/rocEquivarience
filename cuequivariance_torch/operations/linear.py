@@ -150,8 +150,10 @@ class Linear(torch.nn.Module):
                 method=self.method,
                 math_dtype=math_dtype,
                 use_fasteq=True,
-                op_name="equi_linear", # equivariant linear
+                op_name="equi_linear",
             ).to(device)
+        else:
+            self.ff = self.f
 
     def extra_repr(self) -> str:
         return f"shared_weights={self.shared_weights}, internal_weights={self.internal_weights}, weight_numel={self.weight_numel}"
@@ -201,24 +203,24 @@ class Linear(torch.nn.Module):
             raise ValueError("Weights should not be None")
         
         if self.use_fasteq:
-            torch.cuda.synchronize()
-            start_time = time.perf_counter() * 1000
+            #torch.cuda.synchronize()
+            #start_time = time.perf_counter() * 1000
 
             output = self.ff([weight, self.transpose_in(x)], input_indices=input_indices)
             
-            torch.cuda.synchronize()
-            end_time = time.perf_counter() * 1000
-            execution_time_ms = end_time - start_time
-            print(f"<< fasteq equi-linear forward cost: {execution_time_ms:.3f} ms >>")
+            #torch.cuda.synchronize()
+            #end_time = time.perf_counter() * 1000
+            #execution_time_ms = end_time - start_time
+            #print(f"<< fasteq equi-linear forward cost: {execution_time_ms:.3f} ms >>")
         else:
-            torch.cuda.synchronize()
-            start_time = time.perf_counter() * 1000
+            #torch.cuda.synchronize()
+            #start_time = time.perf_counter() * 1000
 
             output = self.f([weight, self.transpose_in(x)], input_indices=input_indices)
 
-            torch.cuda.synchronize()
-            end_time = time.perf_counter() * 1000
-            execution_time_ms = end_time - start_time
-            print(f"<< cueq equi-linear forward cost: {execution_time_ms:.3f} ms >>")
+            #torch.cuda.synchronize()
+            #end_time = time.perf_counter() * 1000
+            #execution_time_ms = end_time - start_time
+            #print(f"<< cueq equi-linear forward cost: {execution_time_ms:.3f} ms >>")
 
         return self.transpose_out(output[0])

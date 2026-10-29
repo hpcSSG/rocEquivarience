@@ -622,6 +622,14 @@ class SegmentedPolynomial(nn.Module):
     ):
         super().__init__()
 
+        # FastEq tensor constructors require a torch.dtype, while the public
+        # interface also accepts dtype names such as "float32" and "float64".
+        if isinstance(math_dtype, str):
+            resolved_dtype = getattr(torch, math_dtype, None)
+            if not isinstance(resolved_dtype, torch.dtype):
+                raise ValueError(f"Unsupported math_dtype: {math_dtype!r}")
+            math_dtype = resolved_dtype
+
         self.num_inputs = polynomial.num_inputs
         self.num_outputs = polynomial.num_outputs
         self.method = method
@@ -708,7 +716,11 @@ class SegmentedPolynomial(nn.Module):
             )
             #print(f"stc meta:{self.stc_meta}")
         
-        elif use_fasteq and (self.op_name == "cwtp" or self.method == "uniform_1d"):
+        elif (
+            self.use_fasteq
+            and self.op_name == "cwtp"
+            and self.method == "uniform_1d"
+        ):
 
             self.descriptor = self.m.polynomial.operations[0][1]
             print(f"uniform1d path, descriptor:{self.descriptor}")
@@ -849,16 +861,39 @@ class SegmentedPolynomial(nn.Module):
                     return self.fallback(
                         inputs, input_indices, output_shapes, output_indices
                     )
+        # Keep Python descriptors and FastEq JIT metadata out of export paths.
+        if torch.jit.is_scripting():
+            return self.m(inputs, input_indices, output_shapes, output_indices)
+        else:
+            if (
+                torch.jit.is_tracing()
+                or torch.compiler.is_compiling()
+                or torch.fx._symbolic_trace.is_fx_tracing()
+            ):
+                return self.m(inputs, input_indices, output_shapes, output_indices)
+            return self._forward_eager(
+                inputs, input_indices, output_shapes, output_indices
+            )
+
+    @torch.jit.unused
+    def _forward_eager(
+        self,
+        inputs: List[torch.Tensor],
+        input_indices: Dict[int, torch.Tensor],
+        output_shapes: Dict[int, torch.Tensor],
+        output_indices: Dict[int, torch.Tensor],
+    ) -> List[torch.Tensor]:
+        """Execute the original FastEq dispatch only in eager mode."""
         out = [torch.empty(0) for _ in range(self.num_outputs)]
         #print(f"=========== use fasteq: {self.use_fasteq}, op name: {self.op_name} ==============")
         if self.use_fasteq:
             if self.op_name == "equi_linear":
-                if self.num_outputs != 1:
-                    raise ValueError("equi_linear should have exactly one output")
-                ref = fast_equi_linear(self.descriptor, inputs[0], inputs[1])
-                out[0] = ref
-                #out = self.m(inputs, input_indices, output_shapes, output_indices)
+                # fast_equi_linear is not imported in this module.
+                return self.m(inputs, input_indices, output_shapes, output_indices)
             elif self.op_name == "stc":
+                # STC metadata is initialized only for uniform_1d.
+                if self.method != "uniform_1d":
+                    return self.m(inputs, input_indices, output_shapes, output_indices)
                 i0 = input_indices[0].to(torch.int32)
                 x0 = inputs[0]
                 x1 = inputs[1]
@@ -874,7 +909,10 @@ class SegmentedPolynomial(nn.Module):
                 )
                 
                 out[0] = ref
-            elif self.method == "uniform_1d":
+            elif (
+                self.op_name == "cwtp"
+                and self.method == "uniform_1d"
+            ):
                 
                 w = inputs[0]
                 x = inputs[1]
