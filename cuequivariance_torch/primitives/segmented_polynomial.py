@@ -45,7 +45,7 @@ import time
 #from mace.tools.scatter import scatter_sum
 
 #from fasteq.ops.so3_linear import fast_equi_linear
-from fasteq.ops.fctp import fast_fctp
+from cuequivariance_torch.primitives.fctp import fast_fctp
 from fasteq.ops.uniform1d_jit import fast_uniform1d_jit
 from fasteq.ops.stc_uniform1d_jit import fast_stc_uniform1d_jit
 
@@ -339,179 +339,37 @@ def make_p_for_k(K_per_path, device):
 
 
 @torch.no_grad()
-def make_cg_single_mapping(K_total, I_total, device, path_num, math_dtype):
-    """
-    Build i_for_k[K], val_for_k[K], each k has at most one nnz (or empty).
-      diag    : i_for_k[k]=k if k<I_total
-      single0 : only k=0 uses i=0
-    """
-    i_for_k = torch.full((K_total,), -1, device=device, dtype=torch.int32)
-    val_for_k = torch.zeros((K_total,), device=device, dtype=math_dtype)
-
-    # "diag"
-    if path_num == 4:
-        kk = torch.arange(K_total, device=device, dtype=torch.int32)
-        mask = kk < I_total
-        i_for_k[mask] = kk[mask]
-        val_for_k[mask] = 1.0
-    elif path_num == 1:
-        if K_total > 0:
-            i_for_k[0] = 0
-            val_for_k[0] = 1.0
-    else:
-        raise ValueError(f"Unknown path_num: {path_num}")
-
-    return i_for_k, val_for_k
-
-@torch.no_grad()
 def infer_fctp_meta(descriptor, math_dtype, device):
-    # per-path tensors
-    cg_indices = []
-    cg_values  = []
-    c_tensors  = []
-    dim_list   = []
+    """Expand actual CG terms using each operand's segment storage offsets.
 
-    #print(f"i dims:", sum(descriptor.get_dims("i")))
-    #print(f"j dims:", sum(descriptor.get_dims("j")))
-    #print(f"k dims:", sum(descriptor.get_dims("k")))
-
-    # 1) build per-path (idx, val, coeffs)
-    for i, path in enumerate(descriptor.paths):
-        if getattr(path, "coefficients", None) is None or path.coefficients.ndim < 3:
-            raise ValueError("FCTP only supports paths with explicit 3D coefficient tensors.")
-
-        coeffs = torch.from_numpy(path.coefficients).to(device=device, dtype=math_dtype)
-
-        # idx: [nnz, 3] (i,j,k) ; vals: [nnz]
-        idx = coeffs.nonzero(as_tuple=False).to(device=device, dtype=torch.int32)
-        vals = coeffs[idx[:, 0], idx[:, 1], idx[:, 2]].to(device=device, dtype=math_dtype)
-
-        dim_list.append(int(vals.numel()))
-
-        cg_indices.append(idx)
-        cg_values.append(vals)
-        c_tensors.append(coeffs)
-
-    # 2) global dimensions
-    dimensions_dict = descriptor.get_dimensions_dict()
-    U = sum(dimensions_dict["u"])
-    V = sum(dimensions_dict["v"])
-    W = sum(dimensions_dict["w"])
-
-    # 3) K_per_path / offsets / totals
-    P = len(cg_indices)
-    assert P == len(dim_list)
-
-    K_per_path = torch.tensor(dim_list, device=device, dtype=torch.int32)
-    path_offset = torch.empty(P, device=device, dtype=torch.int32)
-    path_offset[0] = 0
-    if P > 1:
-        path_offset[1:] = torch.cumsum(K_per_path[:-1], dim=0)
-    
-    #K_total = int(K_per_path.sum().item())
-    I_total = sum(descriptor.get_dims("i"))
-    K_total = sum(descriptor.get_dims("k"))
-
-
-    # 4) pack nnz info
-    nnz_list = [int(ci.shape[0]) for ci in cg_indices]
-    nnz_max = max(nnz_list) if nnz_list else 0
-    nnz_per_path = torch.tensor(nnz_list, device=device, dtype=torch.int32)
-
-    # 5) pack cg_*_all
-    cg_i_all   = torch.zeros((P, nnz_max), device=device, dtype=torch.int32)
-    cg_j_all   = torch.zeros((P, nnz_max), device=device, dtype=torch.int32)
-    cg_k_all   = torch.zeros((P, nnz_max), device=device, dtype=torch.int32)
-    cg_val_all = torch.zeros((P, nnz_max), device=device, dtype=math_dtype)
-
-    for p in range(P):
-        ci_local = cg_indices[p]   # [nnz_p, 3]
-        cv       = cg_values[p]    # [nnz_p]
-        nnz_p    = nnz_list[p]
-        offset_p = int(path_offset[p].item())
-
-        i_local = ci_local[:, 0]
-        j_local = ci_local[:, 1]
-        k_local = ci_local[:, 2]
-
-        # --- local -> global ---
-        i_global = i_local + offset_p
-        j_global = j_local              # TODO: only support j_local = j_global = 0
-        k_global = k_local + offset_p
-
-        cg_i_all[p, :nnz_p]   = i_global
-        cg_j_all[p, :nnz_p]   = j_global
-        cg_k_all[p, :nnz_p]   = k_global
-        cg_val_all[p, :nnz_p] = cv
-    
-    i_for_k, val_for_k = make_cg_single_mapping(K_total, I_total, device, P, math_dtype)
-    p_for_k = make_p_for_k(K_per_path, device)
-
-    nnz0 = int(nnz_per_path[0])
-
-    def can_use_empty_grad_x(i_for_k: torch.Tensor, I: int) -> bool:
-        i_cpu = i_for_k.detach().cpu()
-        valid = i_cpu[i_cpu >= 0]
-
-        if valid.numel() != I:
-            return False
-
-        sorted_i = torch.sort(valid).values
-        return torch.equal(sorted_i, torch.arange(I, dtype=sorted_i.dtype))
-    
-    print(f"cg_val_all:{cg_val_all}, shape:{cg_val_all.shape}", )
-
-    # check that all non-zero CG coefficients are identical
-    nonzero_cg_vals = cg_val_all[cg_val_all != 0]
-
-    if nonzero_cg_vals.numel() == 0:
-        raise ValueError("cg_val_all does not contain any non-zero CG coefficients.")
-
-    cg_val_ref = nonzero_cg_vals[0]
-
-    if not torch.allclose(
-        nonzero_cg_vals,
-        cg_val_ref.expand_as(nonzero_cg_vals),
-        rtol=1e-5,
-        atol=1e-8,
-    ):
-        unique_vals = torch.unique(nonzero_cg_vals.detach().cpu())
-        raise ValueError(
-            "FCTP requires all non-zero CG coefficients to be identical, "
-            f"but found different values: {unique_vals.tolist()}"
-        )
-
-    cg_val_0 = cg_val_ref.item()
-
+    A term is (weight index, x index, y index, output index, CG value).
+    Shared output/input segments retain repeated indices for accumulation.
+    """
+    if descriptor.subscripts != "uvw,iu,jv,kw+ijk":
+        raise ValueError("FastEq FCTP expects uvw,iu,jv,kw+ijk")
+    offsets = [op.segment_slices() for op in descriptor.operands]
+    indices = [[], [], [], []]
+    coefficients = []
+    for path in descriptor.paths:
+        segments = [op.segments[idx] for op, idx in zip(descriptor.operands, path.indices)]
+        (_, U), (_, V), (_, W) = segments[1:]
+        starts = [slices[idx].start for slices, idx in zip(offsets, path.indices)]
+        cg = path.coefficients
+        for i, j, k in zip(*cg.nonzero()):
+            for u in range(U):
+                for v in range(V):
+                    for w in range(W):
+                        term = (starts[0] + (u * V + v) * W + w,
+                                starts[1] + i * U + u,
+                                starts[2] + j * V + v,
+                                starts[3] + k * W + w)
+                        for dest, index in zip(indices, term):
+                            dest.append(index)
+                        coefficients.append(float(cg[i, j, k]))
     return {
-        "cg_indices": cg_indices,
-        "cg_values": cg_values,
-        "c_tensors": c_tensors,
-
-        "U": U, "V": V, "W": W,
-
-        "P": P,
-        "K_per_path": K_per_path,
-        "path_offset": path_offset,
-        "I_total": I_total,
-        "K_total": K_total,
-
-        "nnz_list": nnz_list,
-        "nnz_max": nnz_max,
-        "nnz_per_path": nnz_per_path,
-
-        "cg_i_all": cg_i_all,
-        "cg_j_all": cg_j_all,
-        "cg_k_all": cg_k_all,
-        "cg_val_all": cg_val_all,
-        "i_for_k": i_for_k,
-        "val_for_k": val_for_k,
-        "p_for_k": p_for_k,
-
-        "nnz0": nnz0,
-        "cg_val_0": cg_val_0,
-        "can_use_empty_grad_x": can_use_empty_grad_x(i_for_k, I_total)
-        
+        "indices": [torch.tensor(idx, dtype=torch.int64, device=device) for idx in indices],
+        "coefficients": torch.tensor(coefficients, dtype=math_dtype or torch.get_default_dtype(), device=device),
+        "output_size": descriptor.operands[3].size,
     }
 
 class SegmentedPolynomial(nn.Module):
@@ -753,8 +611,12 @@ class SegmentedPolynomial(nn.Module):
             self.u1d_meta["u_dim"] = u_dim
             
         
-        elif use_fasteq and (op_name == "fctp"):
-            self.meta = infer_fctp_meta(self.descriptor, math_dtype=math_dtype, device="cuda")
+        elif use_fasteq and op_name == "fctp" and method == "fused_tp":
+            meta = infer_fctp_meta(self.descriptor, math_dtype=math_dtype, device="cpu")
+            for n, idx in enumerate(meta["indices"]):
+                self.register_buffer(f"fctp_index_{n}", idx)
+            self.register_buffer("fctp_coefficients", meta["coefficients"])
+            self.fctp_output_size = meta["output_size"]
             
 
 
@@ -920,11 +782,13 @@ class SegmentedPolynomial(nn.Module):
                 
                 ref = fast_uniform1d_jit(w, x, y, input_indices, output_indices, self.u1d_meta)
                 out[0] = ref
-            elif self.op_name == "fctp":
+            elif self.op_name == "fctp" and self.method == "fused_tp":
                 w, x, y = inputs[0], inputs[1], inputs[2]
                 ref = fast_fctp(
                     w, x, y,
-                    self.meta,
+                    {"indices": [getattr(self, f"fctp_index_{n}") for n in range(4)],
+                     "coefficients": self.fctp_coefficients,
+                     "output_size": self.fctp_output_size},
                 )
                 out[0] = ref
             else:

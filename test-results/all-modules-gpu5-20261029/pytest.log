@@ -1,0 +1,337 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.18, pytest-8.3.4, pluggy-1.5.0
+rootdir: /home/malixian/repos/rocEquivarience
+configfile: pyproject.toml
+plugins: cov-6.0.0
+collected 3206 items
+
+tests/layers/batchnorm_test.py .....................                     [  0%]
+tests/layers/tp_conv_fully_connected_test.py .sss.s.s.s.s......          [  1%]
+tests/operations/channel_wise_test.py .s.s.....s.s.....s.s.....s.s.....s [  2%]
+.s.....s.s....sssssssssssssssssssssssssF                                 [  3%]
+tests/operations/fully_connected_test.py ........ssss............sssssss [  4%]
+sssssssssssssssssssssssssssssssssssssssss.........                       [  6%]
+tests/operations/linear_test.py ....................................ssss [  7%]
+ssssssssssssssssssssssssssssssss.......................................s [  9%]
+ssssssssssssssssssssssssssssssssss.sssssssssssssssssssssssssssssssssssss [ 11%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 14%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss.. [ 16%]
+..ss..s                                                                  [ 16%]
+tests/operations/rotation_test.py ....sss                                [ 16%]
+tests/operations/spherical_harmonics_test.py ........................... [ 17%]
+.............................sssssssssssssssssssssssssssssssssssssssssss [ 19%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 22%]
+sssss                                                                    [ 22%]
+tests/operations/symmetric_contraction_test.py ssssssssssssssss.ssssssss [ 22%]
+ss..ss..ssssssssss..ss..ssssssssssssssss                                 [ 24%]
+tests/primitives/equivariant_tensor_product_test.py ssss........ssssssss [ 24%]
+......................................................................ss [ 27%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 29%]
+ssssssssssssssssssssssssssssssssssssssssssssssssss                       [ 30%]
+tests/primitives/primitive_export_test.py sss...s...s......              [ 31%]
+tests/primitives/segmented_polynomial_test.py .......................... [ 32%]
+...........................s.sss...s.s.s...s.sss...s.s.s.s.s.s.sssss.s.s [ 34%]
+ssss.s.sssss.s.sssssssss.s.sssss.s.sssss.s.sssss.s.sssssssssssssssssssss [ 36%]
+ssssssssssssssssssssssss.s.s.sss.s.s.s.s.s.s.sss.s.s.s.s.s.sssssssssssss [ 38%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 41%]
+ssssssssssssssssssssssss.s.s.sss.s.s.s.s.s.s.sss.s.s.s.s.s.sssssssssssss [ 43%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 45%]
+ssssssssssssssssssssssss.s.s.sss.s.s.s.s.s.s.sss.s.s.s.s.s.sssssssssssss [ 47%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 50%]
+ssssssssssssssssssssssss.s.sssss.s.sssss.s.sssss.s.sssssssssssssssssssss [ 52%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 54%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 56%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 59%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 61%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 63%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 65%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 68%]
+ssssssssssssssssssssssss.........sss..ss.ss.ss..ss.s.ss.ss..ss.s.ss.ss.. [ 70%]
+ss.s.ss.ss..ss.                                                          [ 70%]
+tests/primitives/symmetric_tensor_product_test.py ssssssssssssssssssssss [ 71%]
+ssssss..ssssssssssssssssssss                                             [ 72%]
+tests/primitives/tensor_product_test.py ssssssssssssssssssssssssssssssss [ 73%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 75%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 77%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 80%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 82%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 84%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 86%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 89%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 91%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 93%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 95%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 98%]
+ssssssssssssssssssssssssssssssssss                                       [ 99%]
+tests/primitives/transpose_test.py ......................                [ 99%]
+tests/primitives/triangle_test.py .../public-data/malixian/conda/fasteq/lib/python3.10/site-packages/coverage/inorout.py:524: CoverageWarning: Module cuequivariance_torch.layers was previously imported, but not measured (module-not-measured)
+  self.warn(msg, slug="module-not-measured")
+                                    [100%]
+
+=================================== FAILURES ===================================
+__________________________ test_channel_wise_indexing __________________________
+
+    def test_channel_wise_indexing():
+        if not torch.cuda.is_available():
+            pytest.skip("CUDA is not available")
+    
+        irreps1 = cue.Irreps("SO3", "32x0")
+        irreps2 = cue.Irreps("SO3", "0 + 1")
+        irreps3 = cue.Irreps("SO3", "32x0")
+    
+        x1 = torch.randn(
+            10, irreps1.dim, device=device, requires_grad=True, dtype=torch.float64
+        )
+        x2 = torch.randn(
+            32, irreps2.dim, device=device, requires_grad=True, dtype=torch.float64
+        )
+        indices = torch.randint(0, 10, (32,), device=device, dtype=torch.int64)
+    
+        outputs = {}
+        for use_fallback in [True, False]:
+            m = cuet.ChannelWiseTensorProduct(
+                irreps1,
+                irreps2,
+                irreps3,
+                shared_weights=True,
+                internal_weights=False,
+                layout=cue.ir_mul,
+                device="cuda",
+                dtype=torch.float64,
+                use_fallback=use_fallback,
+            )
+    
+            torch.manual_seed(0)
+            w = torch.randn(
+                1, m.weight_numel, device="cuda", requires_grad=True, dtype=torch.float64
+            )
+    
+            (grad1, grad2, grad3) = torch.autograd.grad(
+                m(x1, x2, w, indices_1=indices, indices_out=indices, size_out=10)
+                .pow(2)
+                .sum(),
+                (x1, x2, w),
+                create_graph=True,
+            )
+            (ggrad1, ggrad2, ggrad3) = torch.autograd.grad(
+                grad1.pow(2).sum() + grad2.pow(2).sum() + grad3.pow(2).sum(),
+                (x1, x2, w),
+            )
+            outputs[use_fallback] = (ggrad1, ggrad2, ggrad3)
+    
+            out_edge = m(x1[indices], x2, w)
+            out = torch.zeros(
+                [10, out_edge.shape[-1]], device=device, dtype=out_edge.dtype
+            ).scatter_add(0, indices.unsqueeze(1).expand_as(out_edge), out_edge)
+            (Igrad1, Igrad2, Igrad3) = torch.autograd.grad(
+                out.pow(2).sum(), (x1, x2, w), create_graph=True
+            )
+            (Iggrad1, Iggrad2, Iggrad3) = torch.autograd.grad(
+                Igrad1.pow(2).sum() + Igrad2.pow(2).sum() + Igrad3.pow(2).sum(),
+                (x1, x2, w),
+            )
+            torch.testing.assert_close(Igrad1, grad1, atol=1e-5, rtol=1e-5)
+            torch.testing.assert_close(Igrad2, grad2, atol=1e-5, rtol=1e-5)
+>           torch.testing.assert_close(Igrad3, grad3, atol=1e-5, rtol=1e-5)
+E           AssertionError: Tensor-likes are not close!
+E           
+E           Mismatched elements: 32 / 32 (100.0%)
+E           Greatest absolute difference: 312.74222534977093 at index (0, 24) (up to 1e-05 allowed)
+E           Greatest relative difference: 35076493.788248554 at index (0, 20) (up to 1e-05 allowed)
+
+tests/operations/channel_wise_test.py:289: AssertionError
+----------------------------- Captured stdout call -----------------------------
+<< fasteq cwtp forward cost: 0.707 ms >>
+<< fasteq cwtp forward cost: 0.721 ms >>
+uniform1d path, descriptor:u,u,,u sizes=32,32,4,32 num_segments=1,1,4,1 num_paths=1 u=32
+polynomial.operations:((Operation((0, 1, 2, 3)), u,u,,u sizes=32,32,4,32 num_segments=1,1,4,1 num_paths=1 u=32),)
+<< fasteq cwtp forward cost: 2.103 ms >>
+<< fasteq uniform1d fused backward-backward cost: 1.786 ms >>
+<< fasteq cwtp forward cost: 1.733 ms >>
+<< fasteq uniform1d fused backward-backward cost: 1.658 ms >>
+=============================== warnings summary ===============================
+tests/layers/tp_conv_fully_connected_test.py: 5 warnings
+tests/operations/fully_connected_test.py: 21 warnings
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/tp_fully_connected.py:122: DeprecationWarning: `use_fallback` is deprecated, please use `method` instead
+    warnings.warn(
+
+tests/operations/channel_wise_test.py: 38 warnings
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/tp_channel_wise.py:157: DeprecationWarning: `use_fallback` is deprecated, please use `method` instead
+    warnings.warn(
+
+tests/operations/fully_connected_test.py: 11 warnings
+  /public-data/malixian/conda/fasteq/lib/python3.10/site-packages/cuequivariance/group_theory/irreps_array/misc_ui.py:25: UserWarning: layout is not specified, defaulting to cue.mul_ir. This is the layout used in the e3nn library. We use it as the default layout for compatibility with e3nn. However, the cue.ir_mul layout is faster and more memory efficient. Please specify the layout explicitly to avoid this warning.
+    warnings.warn(
+
+tests/operations/linear_test.py: 74 warnings
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/linear.py:128: DeprecationWarning: `use_fallback` is deprecated, please use `method` instead
+    warnings.warn(
+
+tests/operations/rotation_test.py::test_rotation
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/rotation.py:98: UserWarning: Segments are not the same shape, falling back to naive method
+  You can consider making the segments uniform in the descriptor.
+    warnings.warn(
+
+tests/operations/rotation_test.py::test_inversion[False]
+tests/operations/rotation_test.py::test_inversion[True]
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/rotation.py:283: DeprecationWarning: `use_fallback` is deprecated, please use `method` instead
+    warnings.warn(
+
+tests/operations/spherical_harmonics_test.py: 56 warnings
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/spherical_harmonics.py:62: DeprecationWarning: `use_fallback` is deprecated, please use `method` instead
+    warnings.warn(
+
+tests/operations/symmetric_contraction_test.py::test_mace_compatibility
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/symmetric_contraction.py:196: DeprecationWarning: `use_fallback` is deprecated, please use `method` instead
+    warnings.warn(
+
+tests/primitives/equivariant_tensor_product_test.py: 156 warnings
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/primitives/equivariant_tensor_product.py:172: DeprecationWarning: EquivariantTensorProduct is deprecated and will be removed in a future version. Please use EquivariantPolynomial instead.
+    e = cue.EquivariantTensorProduct(
+
+tests/primitives/equivariant_tensor_product_test.py: 22 warnings
+tests/primitives/primitive_export_test.py: 6 warnings
+  /public-data/malixian/conda/fasteq/lib/python3.10/site-packages/cuequivariance_ops_torch/tensor_product_uniform_1d.py:143: UserWarning: TensorProductUniform1d is deprecated and will be removed in a future version.
+  Please use SegmentedPolynomial from the frontend with the appropriate method.
+    warnings.warn(
+
+tests/primitives/equivariant_tensor_product_test.py: 34 warnings
+tests/primitives/symmetric_tensor_product_test.py: 2 warnings
+  /public-data/malixian/conda/fasteq/lib/python3.10/site-packages/cuequivariance_ops_torch/symmetric_tensor_contraction.py:110: UserWarning: SymmetricTensorContraction is deprecated and will be removed in a future version.
+  Please use SegmentedPolynomial from the frontend with the appropriate method.
+    warnings.warn(
+
+tests/primitives/segmented_polynomial_test.py: 173 warnings
+  /home/malixian/repos/rocEquivarience/tests/primitives/segmented_polynomial_test.py:183: UserWarning: The .grad attribute of a Tensor that is not a leaf Tensor is being accessed. Its .grad attribute won't be populated during autograd.backward(). If you indeed want the .grad field to be populated for a non-leaf Tensor, use .retain_grad() on the non-leaf Tensor. If you access the non-leaf Tensor by mistake, make sure you access the leaf Tensor instead. See github.com/pytorch/pytorch/pull/30531 for more informations. (Triggered internally at /pytorch/build/aten/src/ATen/core/TensorBody.h:489.)
+    if a.requires_grad and (a.grad is not None or b.grad is not None):
+
+tests/primitives/segmented_polynomial_test.py: 11 warnings
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/primitives/segmented_polynomial_fused_tp.py:89: UserWarning: `math_dtype` is not provided for method `fused_tp`: using float32.
+    warnings.warn(
+
+tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_dytpes[device1-indexing0-False-False-eager-5-dtype0-math_dtype0-fused_tp-channelwise_tensor_product-polynomial0]
+tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_dytpes[device1-indexing0-False-False-eager-5-dtype2-math_dtype2-fused_tp-channelwise_tensor_product-polynomial0]
+tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_dytpes[device1-indexing0-False-False-eager-5-dtype4-None-fused_tp-channelwise_tensor_product-polynomial0]
+tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_dytpes[device1-indexing0-False-False-eager-5-dtype6-float32-fused_tp-channelwise_tensor_product-polynomial0]
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/primitives/segmented_polynomial.py:720: UserWarning: Fused TP is not supported on CPU. Falling back to naive implementation.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /home/malixian/repos/rocEquivarience/test-results/all-modules-gpu5-20261029/junit.xml -
+
+---------- coverage: platform linux, python 3.10.18-final-0 ----------
+Name                                                                     Stmts   Miss  Cover   Missing
+------------------------------------------------------------------------------------------------------
+cuequivariance_torch/layers/__init__.py                                      3      3     0%   15-18
+cuequivariance_torch/layers/batchnorm.py                                   113     11    90%   16-45, 94, 97, 100, 137, 165
+cuequivariance_torch/layers/tp_conv_fully_connected.py                      73     16    78%   15-98, 156, 198, 206, 213, 221, 243, 253, 258
+cuequivariance_torch/operations/linear.py                                   63     19    70%   16-56, 89, 96, 156-159, 190, 196, 203, 219
+cuequivariance_torch/operations/rotation.py                                 94     32    66%   15-48, 64, 104-120, 128, 161, 180, 212-230, 246, 273-281, 288, 294-299, 307
+cuequivariance_torch/operations/spherical_harmonics.py                      27     13    52%   15-29, 60, 68, 76, 90
+cuequivariance_torch/operations/symmetric_contraction.py                    87     40    54%   16-113, 138, 190-194, 201, 207-212, 241, 250-268, 294-299, 304-305, 316
+cuequivariance_torch/operations/tp_channel_wise.py                          92     34    63%   16-61, 111, 147-155, 162, 168-173, 195-203, 245, 249, 259, 264, 284-297
+cuequivariance_torch/operations/tp_fully_connected.py                       61     16    74%   16-63, 110, 120, 177-184, 214, 217
+cuequivariance_torch/primitives/equivariant_tensor_product.py              114     42    63%   15-25, 30-31, 37-38, 45-46, 54-73, 80, 84-85, 94-95, 111-145, 179, 202-203, 218-219, 247, 259-262, 275, 289
+cuequivariance_torch/primitives/fctp.py                                     44     31    30%   2-30, 32, 37, 51-69
+cuequivariance_torch/primitives/segmented_polynomial.py                    300     87    71%   17-59, 73, 83, 88, 94-136, 170, 202-203, 239, 242, 254, 267, 274, 276, 280, 330-342, 349, 375-470, 488, 502-513, 516, 544, 623-632, 728, 735, 740-741, 758
+cuequivariance_torch/primitives/segmented_polynomial_fused_tp.py           106     32    70%   16-28, 44-47, 51-52, 68-71, 75-76, 94-97, 101, 136, 140, 150-151, 167, 176, 178, 186, 240
+cuequivariance_torch/primitives/segmented_polynomial_indexed_linear.py     150     43    71%   16-27, 72-75, 116, 138-139, 159-160, 173, 198, 208, 212, 219, 223, 228, 237, 239, 247, 257-266, 298, 301, 304-307, 311-316, 326
+cuequivariance_torch/primitives/segmented_polynomial_naive.py              202     55    73%   16-30, 35-38, 43, 51, 61, 135, 173-174, 193, 209, 232, 239-240, 245-251, 255-256, 260-261, 265-266, 270-271, 275-299, 312-315, 346-350, 359, 361, 417
+cuequivariance_torch/primitives/segmented_polynomial_uniform_1d.py         101     24    76%   16-39, 85-90, 103-112, 168-172, 177, 223
+cuequivariance_torch/primitives/symmetric_tensor_product.py                144     47    67%   15-37, 75, 100-112, 125, 141-147, 156-165, 206, 208, 215, 218, 221-225, 234, 239, 242, 244, 246, 266, 271, 313, 342-343, 359, 366, 368, 370
+cuequivariance_torch/primitives/tensor_product.py                          323    148    54%   15-29, 34-37, 42-57, 68, 78-85, 98-105, 139, 147, 149, 165, 181, 189, 199, 262, 300-301, 312-344, 351-352, 357-363, 367-368, 372-373, 377-378, 382-412, 417, 421, 429, 432, 438, 462, 489-490, 496, 501, 508-509, 524, 541-543, 563-564, 579, 596-598, 621-622, 648-651, 670-673, 695-808
+cuequivariance_torch/primitives/transpose.py                                74     25    66%   15-32, 63-66, 83-84, 100-101, 107, 116-117, 145, 166, 182-189, 193
+cuequivariance_torch/primitives/triangle.py                                 30     21    30%   15-34, 128-129, 136, 237-238, 263, 422-423
+------------------------------------------------------------------------------------------------------
+TOTAL                                                                     2201    739    66%
+Coverage HTML written to dir test-results/all-modules-gpu5-20261029/html
+Coverage JSON written to file test-results/all-modules-gpu5-20261029/coverage.json
+
+============================= slowest 20 durations =============================
+5.50s call     tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_export[indexing0-True-True-compile-5-dtype0-math_dtype0-naive-channelwise_tensor_product-polynomial0]
+4.69s call     tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_indexing[indexing21-True-True-eager-5-dtype0-math_dtype0-uniform_1d-channelwise_tensor_product-polynomial0]
+4.45s call     tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_indexing[indexing0-True-True-eager-5-dtype0-math_dtype0-uniform_1d-channelwise_tensor_product-polynomial0]
+4.26s call     tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_indexing[indexing3-True-True-eager-5-dtype0-math_dtype0-uniform_1d-channelwise_tensor_product-polynomial0]
+4.25s call     tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_indexing[indexing13-True-True-eager-5-dtype0-math_dtype0-uniform_1d-channelwise_tensor_product-polynomial0]
+4.17s call     tests/operations/rotation_test.py::test_rotation
+4.14s call     tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_indexing[indexing15-True-True-eager-5-dtype0-math_dtype0-uniform_1d-channelwise_tensor_product-polynomial0]
+4.05s call     tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_indexing[indexing9-True-True-eager-5-dtype0-math_dtype0-uniform_1d-channelwise_tensor_product-polynomial0]
+4.04s call     tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_indexing[indexing12-True-True-eager-5-dtype0-math_dtype0-uniform_1d-channelwise_tensor_product-polynomial0]
+4.01s call     tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_indexing[indexing2-True-True-eager-5-dtype0-math_dtype0-uniform_1d-channelwise_tensor_product-polynomial0]
+4.01s call     tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_indexing[indexing1-True-True-eager-5-dtype0-math_dtype0-uniform_1d-channelwise_tensor_product-polynomial0]
+4.00s call     tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_indexing[indexing6-True-True-eager-5-dtype0-math_dtype0-uniform_1d-channelwise_tensor_product-polynomial0]
+3.99s call     tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_indexing[indexing14-True-True-eager-5-dtype0-math_dtype0-uniform_1d-channelwise_tensor_product-polynomial0]
+3.98s call     tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_indexing[indexing10-True-True-eager-5-dtype0-math_dtype0-uniform_1d-channelwise_tensor_product-polynomial0]
+3.92s call     tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_indexing[indexing11-True-True-eager-5-dtype0-math_dtype0-uniform_1d-channelwise_tensor_product-polynomial0]
+3.90s call     tests/primitives/segmented_polynomial_test.py::test_segmented_polynomial_indexing[indexing18-True-True-eager-5-dtype0-math_dtype0-uniform_1d-channelwise_tensor_product-polynomial0]
+3.57s call     tests/operations/symmetric_contraction_test.py::test_export[compile-32-True-(mul,irrep)-dtype0-math_dtype0-1e-10-1e-10]
+2.59s call     tests/operations/linear_test.py::test_export[True-compile-True-(mul,irrep)-irreps_out0-irreps_in0]
+2.40s call     tests/operations/symmetric_contraction_test.py::test_export[compile-32-True-(mul,irrep)-dtype1-float32-1e-05-1e-05]
+1.71s call     tests/primitives/equivariant_tensor_product_test.py::test_performance_cuda_vs_fx[dtype1-math_dtype1-e3]
+=========================== short test summary info ============================
+SKIPPED [6] tests/layers/tp_conv_fully_connected_test.py:42: Skipping redundant layout test
+SKIPPED [1] tests/layers/tp_conv_fully_connected_test.py:46: Skipping complex MLP test without batch_norm
+SKIPPED [12] tests/operations/channel_wise_test.py:59: This method does not work for non-uniform irreps.
+SKIPPED [16] tests/operations/channel_wise_test.py:121: Skipping batch=1 test for speed
+SKIPPED [8] tests/operations/channel_wise_test.py:117: Skipping slow JIT compilation test
+SKIPPED [1] tests/operations/channel_wise_test.py:171: Skipping channel_wise_bwd_bwd test for speed - Covered by test_channel_wise_indexing
+SKIPPED [4] tests/operations/fully_connected_test.py:59: Skipping float32 test for fallback=False (fused_tp)
+SKIPPED [12] tests/operations/fully_connected_test.py:122: Skipping compile mode for speed - takes 1+ seconds
+SKIPPED [8] tests/operations/fully_connected_test.py:118: Skipping redundant layout test with fallback=True
+SKIPPED [12] tests/operations/fully_connected_test.py:126: Skipping script mode for speed
+SKIPPED [16] tests/operations/fully_connected_test.py:114: Skipping slow JIT compilation test
+SKIPPED [9] tests/operations/linear_test.py:106: Skipping complex irreps combination for speed
+SKIPPED [18] tests/operations/linear_test.py:98: Skipping redundant layout test
+SKIPPED [9] tests/operations/linear_test.py:102: Skipping non-shared weights test for speed
+SKIPPED [16] tests/operations/linear_test.py:249: Skipping complex irreps combinations for speed
+SKIPPED [36] tests/operations/linear_test.py:229: Skipping redundant layout test with fallback=True
+SKIPPED [18] tests/operations/linear_test.py:245: Skipping shared_weights=False for speed
+SKIPPED [72] tests/operations/linear_test.py:225: Skipping slow JIT compilation test
+SKIPPED [72] tests/operations/linear_test.py:241: Skipping use_fallback=False for speed
+SKIPPED [1] tests/operations/linear_test.py:289: fused_tp does not support float32 math_dtype with FP64 inputs
+SKIPPED [2] tests/operations/linear_test.py:291: indexed_linear does not support non-None or CUBLAS math_dtype
+SKIPPED [3] tests/operations/rotation_test.py:84: Skipping all rotation export tests for speed - they take 10+ seconds each
+SKIPPED [24] tests/operations/spherical_harmonics_test.py:102: Skipping compile mode for speed
+SKIPPED [20] tests/operations/spherical_harmonics_test.py:94: Skipping fp16/bf16 tests with CUDA backend
+SKIPPED [12] tests/operations/spherical_harmonics_test.py:98: Skipping high degree multi-l tests for speed
+SKIPPED [24] tests/operations/spherical_harmonics_test.py:106: Skipping script mode for speed
+SKIPPED [40] tests/operations/spherical_harmonics_test.py:90: Skipping slow JIT compilation test
+SKIPPED [16] tests/operations/symmetric_contraction_test.py:41: Skipping symmetric contraction test for speed - takes 1.3+ seconds
+SKIPPED [16] tests/operations/symmetric_contraction_test.py:152: Skipping batch=1 test for speed
+SKIPPED [8] tests/operations/symmetric_contraction_test.py:156: Skipping redundant layout test
+SKIPPED [16] tests/operations/symmetric_contraction_test.py:148: Skipping slow JIT compilation test
+SKIPPED [4] tests/primitives/equivariant_tensor_product_test.py:104: Skipping mixed precision performance tests for speed
+SKIPPED [8] tests/primitives/equivariant_tensor_product_test.py:100: Skipping fp16/bf16 performance tests for speed
+SKIPPED [40] tests/primitives/equivariant_tensor_product_test.py:199: Skipping compile mode for speed - takes 1.5+ seconds
+SKIPPED [40] tests/primitives/equivariant_tensor_product_test.py:203: Skipping script mode for speed - takes 1+ seconds
+SKIPPED [40] tests/primitives/equivariant_tensor_product_test.py:207: Skipping slow JIT compilation test
+SKIPPED [4] tests/primitives/equivariant_tensor_product_test.py:253: Skipping high degrees test for speed - takes 2+ seconds
+SKIPPED [3] tests/primitives/primitive_export_test.py:39: This is deprecated and will be removed soon.
+SKIPPED [2] cuequivariance_torch/_tests/utils.py:139: ONNX not available!
+SKIPPED [4] tests/primitives/segmented_polynomial_test.py:400: Skipping fused TP for symmetric contraction: unsupported
+SKIPPED [1048] tests/primitives/segmented_polynomial_test.py:396: Skipping tests with many options that are not default
+SKIPPED [8] tests/primitives/segmented_polynomial_test.py:406: Skipping fused TP for float32 math_dtype with float64 inputs
+SKIPPED [3] tests/primitives/segmented_polynomial_test.py:225: torch.jit.trace does not work with inline autograd
+SKIPPED [1] tests/primitives/segmented_polynomial_test.py:449: Skipping export mode for naive method
+SKIPPED [16] tests/primitives/segmented_polynomial_test.py:492: Linear is not supported for uniform_1d
+SKIPPED [8] tests/primitives/segmented_polynomial_test.py:500: indexed_linear does not support math_dtype
+SKIPPED [4] tests/primitives/segmented_polynomial_test.py:498: Skipping fused TP for float32 math_dtype with float64 inputs
+SKIPPED [14] tests/primitives/symmetric_tensor_product_test.py:68: Skipping batch_size=0 test for speed
+SKIPPED [2] tests/primitives/symmetric_tensor_product_test.py:80: Skipping float64 tests for speed
+SKIPPED [2] tests/primitives/symmetric_tensor_product_test.py:84: Skipping complex descriptor combinations for speed
+SKIPPED [2] tests/primitives/symmetric_tensor_product_test.py:76: Skipping mixed precision tests for speed
+SKIPPED [8] tests/primitives/symmetric_tensor_product_test.py:72: Skipping fp16/bf16 tests for speed
+SKIPPED [2] tests/primitives/symmetric_tensor_product_test.py:146: Skipping mixed precision tests for speed
+SKIPPED [4] tests/primitives/symmetric_tensor_product_test.py:142: Skipping fp16/bf16 tests for speed
+SKIPPED [2] tests/primitives/symmetric_tensor_product_test.py:150: Skipping fallback=True tests for speed
+SKIPPED [2] tests/primitives/symmetric_tensor_product_test.py:197: Skipping slow compile mode with fallback=True
+SKIPPED [4] tests/primitives/symmetric_tensor_product_test.py:205: Skipping script mode for speed - takes 2+ seconds
+SKIPPED [4] tests/primitives/symmetric_tensor_product_test.py:201: Skipping slow JIT compilation test
+SKIPPED [2] tests/primitives/symmetric_tensor_product_test.py:209: Skipping compile mode for speed
+SKIPPED [640] tests/primitives/tensor_product_test.py:124: Skipping d3 and degree 3 tests for speed - they take 5+ seconds each
+SKIPPED [20] tests/primitives/tensor_product_test.py:110: Skipping complex descriptors d29-d32 for speed - they take 1.3+ seconds each
+SKIPPED [66] tests/primitives/tensor_product_test.py:211: Skipping compile mode for speed - takes 1+ seconds
+SKIPPED [66] tests/primitives/tensor_product_test.py:215: Skipping script mode for speed
+SKIPPED [66] tests/primitives/tensor_product_test.py:219: Skipping slow JIT compilation test
+FAILED tests/operations/channel_wise_test.py::test_channel_wise_indexing - As...
+==== 1 failed, 538 passed, 2667 skipped, 617 warnings in 231.34s (0:03:51) =====

@@ -160,3 +160,56 @@ def test_export(
     m1 = module_with_mode(mode, m1, inputs, dtype, tmp_path)
     out2 = m1(*inputs)
     torch.testing.assert_close(out1, out2)
+
+
+@pytest.mark.parametrize("shared", [False, True])
+@pytest.mark.parametrize("irreps1,irreps2,irreps3", irreps)
+def test_fctp_sparse_terms_and_gradients(shared, irreps1, irreps2, irreps3):
+    """Exercise real CG signs, repeated segments and all three adjoints."""
+    from cuequivariance_torch.primitives.segmented_polynomial import infer_fctp_meta
+    from cuequivariance_torch.primitives.fctp import fast_fctp
+
+    d = descriptors.fully_connected_tensor_product(
+        irreps1, irreps2, irreps3
+    ).polynomial.operations[0][1]
+    # Always validate metadata on CPU; additionally execute the Triton backend
+    # on hosts with CUDA, without treating CPU emulation as kernel validation.
+    devices = [torch.device("cpu")]
+    if torch.cuda.is_available():
+        devices.append(torch.device("cuda"))
+    for dev in devices:
+        meta = infer_fctp_meta(d, torch.float64, dev)
+        inputs = [torch.randn(1 if shared and n == 0 else 2, op.size,
+                              dtype=torch.float64, device=dev, requires_grad=True)
+                  for n, op in enumerate(d.operands[:3])]
+        wi, xi, yi, oi = meta["indices"]
+        terms = inputs[0][:, wi] * inputs[1][:, xi] * inputs[2][:, yi]
+        sparse = terms.new_zeros(2, d.operands[3].size).index_add(
+            1, oi, terms * meta["coefficients"])
+        ref = cuet.TensorProduct(d, math_dtype=torch.float64,
+                                 use_fallback=True).to(dev)(*inputs)
+        actual = fast_fctp(*inputs, meta) if dev.type == "cuda" else sparse
+        torch.testing.assert_close(actual, ref)
+        probe = torch.randn_like(ref)
+        grads = torch.autograd.grad((actual * probe).sum(), inputs, create_graph=True)
+        expected = torch.autograd.grad((ref * probe).sum(), inputs, create_graph=True)
+        for g, e in zip(grads, expected):
+            torch.testing.assert_close(g, e)
+        directions = [torch.randn_like(t) for t in inputs]
+        second = torch.autograd.grad(sum((g * v).sum() for g, v in zip(grads, directions)), inputs)
+        second_ref = torch.autograd.grad(sum((g * v).sum() for g, v in zip(expected, directions)), inputs)
+        for g, e in zip(second, second_ref):
+            torch.testing.assert_close(g, e)
+
+
+@pytest.mark.parametrize("method,fallback,fast,expected", [
+    (None, True, True, False),
+    ("naive", False, True, False),
+    ("naive", None, False, False),
+    ("fused_tp", True, True, True),
+    ("fused_tp", None, False, False),
+])
+def test_fctp_backend_priority(method, fallback, fast, expected):
+    m = cuet.FullyConnectedTensorProduct(
+        *irreps[0], method=method, use_fallback=fallback, use_fasteq=fast)
+    assert m.use_fasteq is expected

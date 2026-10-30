@@ -1,0 +1,76 @@
+Fatal Python error: Aborted
+
+Current thread 0x00007fce39b6d740 (most recent call first):
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 1184 in exec_module
+  File "<frozen importlib._bootstrap>", line 688 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1006 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1027 in _find_and_load
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/cuequivariance_ops_torch/_ext/__init__.py", line 12 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 883 in exec_module
+  File "<frozen importlib._bootstrap>", line 688 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1006 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1027 in _find_and_load
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/cuequivariance_ops_torch/segmented_transpose.py", line 13 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 883 in exec_module
+  File "<frozen importlib._bootstrap>", line 688 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1006 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1027 in _find_and_load
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/cuequivariance_ops_torch/__init__.py", line 16 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 883 in exec_module
+  File "<frozen importlib._bootstrap>", line 688 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1006 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1027 in _find_and_load
+  File "/home/malixian/repos/rocEquivarience/cuequivariance_torch/primitives/transpose.py", line 183 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 883 in exec_module
+  File "<frozen importlib._bootstrap>", line 688 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1006 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1027 in _find_and_load
+  File "/home/malixian/repos/rocEquivarience/cuequivariance_torch/__init__.py", line 26 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 883 in exec_module
+  File "<frozen importlib._bootstrap>", line 688 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1006 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1027 in _find_and_load
+  File "/home/malixian/repos/rocEquivarience/tests/layers/batchnorm_test.py", line 19 in <module>
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/assertion/rewrite.py", line 184 in exec_module
+  File "<frozen importlib._bootstrap>", line 688 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1006 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1027 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1050 in _gcd_import
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/importlib/__init__.py", line 126 in import_module
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/pathlib.py", line 587 in import_path
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/python.py", line 493 in importtestmodule
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/python.py", line 546 in _getobj
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/python.py", line 284 in obj
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/python.py", line 562 in _register_setup_module_fixture
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/python.py", line 549 in collect
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/runner.py", line 389 in collect
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/runner.py", line 341 in from_call
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/runner.py", line 391 in pytest_make_collect_report
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/pluggy/_callers.py", line 103 in _multicall
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/pluggy/_hooks.py", line 513 in __call__
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/runner.py", line 567 in collect_one_node
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/main.py", line 835 in _collect_one_node
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/main.py", line 970 in genitems
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/main.py", line 975 in genitems
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/main.py", line 809 in perform_collect
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/main.py", line 347 in pytest_collection
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/pluggy/_callers.py", line 103 in _multicall
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/pluggy/_hooks.py", line 513 in __call__
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/main.py", line 336 in _main
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/main.py", line 283 in wrap_session
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/main.py", line 330 in pytest_cmdline_main
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/pluggy/_callers.py", line 103 in _multicall
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/pluggy/_hooks.py", line 513 in __call__
+  File "/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/_pytest/config/__init__.py", line 175 in main
+  File "<string>", line 1 in <module>
+
+Extension modules: numpy.core._multiarray_umath, numpy.core._multiarray_tests, numpy.linalg._umath_linalg, numpy.fft._pocketfft_internal, numpy.random._common, numpy.random.bit_generator, numpy.random._bounded_integers, numpy.random._mt19937, numpy.random.mtrand, numpy.random._philox, numpy.random._pcg64, numpy.random._sfc64, numpy.random._generator, torch._C, torch._C._dynamo.autograd_compiler, torch._C._dynamo.eval_frame, torch._C._dynamo.guards, torch._C._dynamo.utils, torch._C._fft, torch._C._linalg, torch._C._nested, torch._C._nn, torch._C._sparse, torch._C._special, cython.cimports.libc.math, scipy._lib._ccallback_c, scipy.linalg._cythonized_array_utils, scipy.linalg._solve_toeplitz, scipy.linalg._decomp_lu_cython, scipy.linalg._matfuncs_sqrtm_triu, scipy.linalg._decomp_update, scipy.sparse._csparsetools, scipy.sparse.csgraph._shortest_path, scipy.sparse.csgraph._traversal, scipy.sparse.csgraph._min_spanning_tree, scipy.sparse.csgraph._flow, scipy.sparse.csgraph._matching, scipy.sparse.csgraph._reordering, scipy.sparse.csgraph._tools (total: 39)

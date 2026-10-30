@@ -1,0 +1,34 @@
+FullyConnectedTensorProduct (self, irreps_in1: cuequivariance.group_theory.irreps_array.irreps.Irreps, irreps_in2: cuequivariance.group_theory.irreps_array.irreps.Irreps, irreps_out: cuequivariance.group_theory.irreps_array.irreps.Irreps, *, layout: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_in1: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_in2: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_out: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, shared_weights: bool = True, internal_weights: bool = None, device: Optional[torch.device] = None, dtype: Optional[torch.dtype] = None, math_dtype: Union[str, torch.dtype, NoneType] = None, use_fallback: Optional[bool] = None, method: Optional[str] = None, use_fasteq: bool = False)
+Linear (self, irreps_in: cuequivariance.group_theory.irreps_array.irreps.Irreps, irreps_out: cuequivariance.group_theory.irreps_array.irreps.Irreps, *, layout: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_in: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_out: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, shared_weights: bool = True, internal_weights: bool = None, weight_classes: Optional[int] = 1, device: Optional[torch.device] = None, dtype: Optional[torch.dtype] = None, math_dtype: Union[str, torch.dtype, NoneType] = None, use_fallback: Optional[bool] = None, method: Optional[str] = None, use_fasteq: bool = False)
+ChannelWiseTensorProduct (self, irreps_in1: cuequivariance.group_theory.irreps_array.irreps.Irreps, irreps_in2: cuequivariance.group_theory.irreps_array.irreps.Irreps, filter_irreps_out: Sequence[cuequivariance.group_theory.representations.irrep.Irrep] = None, *, layout: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_in1: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_in2: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_out: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, shared_weights: bool = True, internal_weights: bool = None, device: Optional[torch.device] = None, dtype: Optional[torch.dtype] = None, math_dtype: Union[str, torch.dtype, NoneType] = None, use_fallback: Optional[bool] = None, method: Optional[str] = None, use_fasteq: bool = False)
+SymmetricContraction (self, irreps_in: cuequivariance.group_theory.irreps_array.irreps.Irreps, irreps_out: cuequivariance.group_theory.irreps_array.irreps.Irreps, contraction_degree: int, num_elements: int, *, layout: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_in: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_out: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, device: Optional[torch.device] = None, dtype: Optional[torch.dtype] = None, math_dtype: Union[str, torch.dtype, NoneType] = None, original_mace: bool = False, use_fallback: Optional[bool] = None, method: Optional[str] = None, use_fasteq: bool = False)
+SegmentedPolynomial (self, polynomial: cuequivariance.segmented_polynomials.segmented_polynomial.SegmentedPolynomial, method: str = '', math_dtype: str | torch.dtype = None, output_dtype_map: List[int] = None, name: str = 'segmented_polynomial', op_name: str = '', use_fasteq: bool = False, u1d_compatible: bool = False)
+SOURCE /home/malixian/repos/rocEquivarience/cuequivariance_torch/__init__.py GPU NVIDIA H100 80GB HBM3 MODE off
+============================= test session starts ==============================
+platform linux -- Python 3.10.18, pytest-8.3.4, pluggy-1.5.0
+rootdir: /home/malixian/repos/rocEquivarience
+configfile: pyproject.toml
+plugins: cov-6.0.0, devtools-0.12.2, syrupy-4.8.0, hydra-core-1.3.2, anyio-4.13.0, typeguard-4.3.0
+collected 81 items
+
+tests/operations/fully_connected_test.py ........ssss............sssssss [ 38%]
+sssssssssssssssssssssssssssssssssssssssss.........                       [100%]
+
+=============================== warnings summary ===============================
+tests/operations/fully_connected_test.py: 21 warnings
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/tp_fully_connected.py:122: DeprecationWarning: `use_fallback` is deprecated, please use `method` instead
+    warnings.warn(
+
+tests/operations/fully_connected_test.py: 11 warnings
+  /public-data/malixian/conda/fasteq/lib/python3.10/site-packages/cuequivariance/group_theory/irreps_array/misc_ui.py:25: UserWarning: layout is not specified, defaulting to cue.mul_ir. This is the layout used in the e3nn library. We use it as the default layout for compatibility with e3nn. However, the cue.ir_mul layout is faster and more memory efficient. Please specify the layout explicitly to avoid this warning.
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /home/malixian/repos/rocEquivarience/test-results/fasteq-comparison-20261029/fctp-off.xml -
+=========================== short test summary info ============================
+SKIPPED [4] tests/operations/fully_connected_test.py:59: Skipping float32 test for fallback=False (fused_tp)
+SKIPPED [12] tests/operations/fully_connected_test.py:122: Skipping compile mode for speed - takes 1+ seconds
+SKIPPED [8] tests/operations/fully_connected_test.py:118: Skipping redundant layout test with fallback=True
+SKIPPED [12] tests/operations/fully_connected_test.py:126: Skipping script mode for speed
+SKIPPED [16] tests/operations/fully_connected_test.py:114: Skipping slow JIT compilation test
+================= 29 passed, 52 skipped, 32 warnings in 8.24s ==================

@@ -15,7 +15,6 @@
 # limitations under the License.
 import warnings
 from typing import Optional
-import time
 
 import torch
 from cuequivariance.group_theory.irreps_array.misc_ui import (
@@ -52,6 +51,10 @@ class FullyConnectedTensorProduct(torch.nn.Module):
             If `True`, the "naive" method is used.
             If `False` or `None` (default), the "fused_tp" method is used.
 
+        use_fasteq (bool, optional): Use FastEq for the resolved "fused_tp" method.
+            An explicit method takes priority over use_fallback; "naive" always
+            uses the reference backend, even when use_fasteq is True.
+
     Note:
         In e3nn there was a irrep_normalization and path_normalization parameters.
         This module currently only supports "component" irrep normalization and "element" path normalization.
@@ -74,7 +77,7 @@ class FullyConnectedTensorProduct(torch.nn.Module):
         math_dtype: Optional[str | torch.dtype] = None,
         use_fallback: Optional[bool] = None,
         method: Optional[str] = None,
-        use_fasteq: bool = False,
+        use_fasteq: bool = True,
     ):
         super().__init__()
         irreps_in1, irreps_in2, irreps_out = default_irreps(
@@ -111,33 +114,6 @@ class FullyConnectedTensorProduct(torch.nn.Module):
         else:
             self.weight = None
 
-        layout_in1 = default_layout(layout_in1 or layout)
-        self.transpose_in1 = cuet.TransposeIrrepsLayout(
-            e.inputs[1].irreps,
-            source=layout_in1,
-            target=e.inputs[1].layout,
-            device=device,
-            use_fallback=use_fallback,
-        )
-
-        layout_in2 = default_layout(layout_in2 or layout)
-        self.transpose_in2 = cuet.TransposeIrrepsLayout(
-            e.inputs[2].irreps,
-            source=layout_in2,
-            target=e.inputs[2].layout,
-            device=device,
-            use_fallback=use_fallback,
-        )
-
-        layout_out = default_layout(layout_out or layout)
-        self.transpose_out = cuet.TransposeIrrepsLayout(
-            e.outputs[0].irreps,
-            source=e.outputs[0].layout,
-            target=layout_out,
-            device=device,
-            use_fallback=use_fallback,
-        )
-
         if method is None:
             if use_fallback is None:
                 # No warning here as it's the default behavior
@@ -151,11 +127,38 @@ class FullyConnectedTensorProduct(torch.nn.Module):
         else:
             self.method = method
 
+        layout_in1 = default_layout(layout_in1 or layout)
+        self.transpose_in1 = cuet.TransposeIrrepsLayout(
+            e.inputs[1].irreps,
+            source=layout_in1,
+            target=e.inputs[1].layout,
+            device=device,
+            use_fallback=True if self.method == "naive" else None,
+        )
+
+        layout_in2 = default_layout(layout_in2 or layout)
+        self.transpose_in2 = cuet.TransposeIrrepsLayout(
+            e.inputs[2].irreps,
+            source=layout_in2,
+            target=e.inputs[2].layout,
+            device=device,
+            use_fallback=True if self.method == "naive" else None,
+        )
+
+        layout_out = default_layout(layout_out or layout)
+        self.transpose_out = cuet.TransposeIrrepsLayout(
+            e.outputs[0].irreps,
+            source=e.outputs[0].layout,
+            target=layout_out,
+            device=device,
+            use_fallback=True if self.method == "naive" else None,
+        )
+
         if self.method == "fused_tp" and math_dtype is None:
             math_dtype = dtype
         
-        self.use_fasteq = use_fasteq
-        if use_fasteq:
+        self.use_fasteq = use_fasteq and self.method == "fused_tp"
+        if self.use_fasteq:
             self.ff = cuet.SegmentedPolynomial(
                 e.polynomial,
                 method=self.method,
@@ -168,6 +171,7 @@ class FullyConnectedTensorProduct(torch.nn.Module):
             e.polynomial,
             method=self.method,
             math_dtype=math_dtype,
+            use_fasteq=False,
         ).to(device)
 
     def extra_repr(self) -> str:
@@ -208,51 +212,11 @@ class FullyConnectedTensorProduct(torch.nn.Module):
         if self.weight is not None:
             if weight is not None:
                 raise ValueError("Internal weights are used, weight should be None")
-            if self.use_fasteq:
-                torch.cuda.synchronize()
-                start_time = time.perf_counter() * 1000
-
-                output = self.ff([self.weight, x1, x2])
-
-                torch.cuda.synchronize()
-                end_time = time.perf_counter() * 1000
-                execution_time_ms = end_time - start_time
-                print(f"<< fasteq fctp forward cost: {execution_time_ms:.3f} ms >>")
-            else:
-                torch.cuda.synchronize()
-                start_time = time.perf_counter() * 1000
-                
-                output = self.f([self.weight, x1, x2])
-
-                torch.cuda.synchronize()
-                end_time = time.perf_counter() * 1000
-                execution_time_ms = end_time - start_time
-                print(f"<< cueq fctp forward cost: {execution_time_ms:.3f} ms >>")
-
+            weight = self.weight
+        elif weight is None:
+            raise ValueError("Internal weights are not used, weight should not be None")
+        if self.use_fasteq:
+            output = self.ff([weight, x1, x2])
         else:
-            if weight is None:
-                raise ValueError(
-                    "Internal weights are not used, weight should not be None"
-                )
-            else:
-                if self.use_fasteq:
-                    #torch.cuda.synchronize()
-                    #start_time = time.perf_counter() * 1000
-
-                    output = self.ff([weight, x1, x2])
-
-                    #torch.cuda.synchronize()
-                    #end_time = time.perf_counter() * 1000
-                    #execution_time_ms = end_time - start_time
-                    #print(f"<< fasteq fctp forward cost: {execution_time_ms:.3f} ms >>")
-                else:
-                    torch.cuda.synchronize()
-                    start_time = time.perf_counter() * 1000
-
-                    output = self.f([weight, x1, x2])
-
-                    torch.cuda.synchronize()
-                    end_time = time.perf_counter() * 1000
-                    execution_time_ms = end_time - start_time
-                    print(f"<< cueq fctp forward cost: {execution_time_ms:.3f} ms >>")
+            output = self.f([weight, x1, x2])
         return self.transpose_out(output[0])

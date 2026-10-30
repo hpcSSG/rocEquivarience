@@ -1,0 +1,48 @@
+FullyConnectedTensorProduct (self, irreps_in1: cuequivariance.group_theory.irreps_array.irreps.Irreps, irreps_in2: cuequivariance.group_theory.irreps_array.irreps.Irreps, irreps_out: cuequivariance.group_theory.irreps_array.irreps.Irreps, *, layout: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_in1: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_in2: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_out: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, shared_weights: bool = True, internal_weights: bool = None, device: Optional[torch.device] = None, dtype: Optional[torch.dtype] = None, math_dtype: Union[str, torch.dtype, NoneType] = None, use_fallback: Optional[bool] = None, method: Optional[str] = None, use_fasteq: bool = True)
+Linear (self, irreps_in: cuequivariance.group_theory.irreps_array.irreps.Irreps, irreps_out: cuequivariance.group_theory.irreps_array.irreps.Irreps, *, layout: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_in: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_out: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, shared_weights: bool = True, internal_weights: bool = None, weight_classes: Optional[int] = 1, device: Optional[torch.device] = None, dtype: Optional[torch.dtype] = None, math_dtype: Union[str, torch.dtype, NoneType] = None, use_fallback: Optional[bool] = None, method: Optional[str] = None, use_fasteq: bool = True)
+ChannelWiseTensorProduct (self, irreps_in1: cuequivariance.group_theory.irreps_array.irreps.Irreps, irreps_in2: cuequivariance.group_theory.irreps_array.irreps.Irreps, filter_irreps_out: Sequence[cuequivariance.group_theory.representations.irrep.Irrep] = None, *, layout: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_in1: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_in2: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_out: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, shared_weights: bool = True, internal_weights: bool = None, device: Optional[torch.device] = None, dtype: Optional[torch.dtype] = None, math_dtype: Union[str, torch.dtype, NoneType] = None, use_fallback: Optional[bool] = None, method: Optional[str] = None, use_fasteq: bool = True)
+SymmetricContraction (self, irreps_in: cuequivariance.group_theory.irreps_array.irreps.Irreps, irreps_out: cuequivariance.group_theory.irreps_array.irreps.Irreps, contraction_degree: int, num_elements: int, *, layout: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_in: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, layout_out: Optional[cuequivariance.group_theory.irreps_array.irreps_layout.IrrepsLayout] = None, device: Optional[torch.device] = None, dtype: Optional[torch.dtype] = None, math_dtype: Union[str, torch.dtype, NoneType] = None, original_mace: bool = False, use_fallback: Optional[bool] = None, method: Optional[str] = None, use_fasteq: bool = True)
+SegmentedPolynomial (self, polynomial: cuequivariance.segmented_polynomials.segmented_polynomial.SegmentedPolynomial, method: str = '', math_dtype: str | torch.dtype = None, output_dtype_map: List[int] = None, name: str = 'segmented_polynomial', op_name: str = '', use_fasteq: bool = True, u1d_compatible: bool = False)
+SOURCE /home/malixian/repos/rocEquivarience/cuequivariance_torch/__init__.py GPU NVIDIA H100 80GB HBM3 MODE on
+============================= test session starts ==============================
+platform linux -- Python 3.10.18, pytest-8.3.4, pluggy-1.5.0
+rootdir: /home/malixian/repos/rocEquivarience
+configfile: pyproject.toml
+plugins: cov-6.0.0, devtools-0.12.2, syrupy-4.8.0, hydra-core-1.3.2, anyio-4.13.0, typeguard-4.3.0
+collected 74 items
+
+tests/operations/channel_wise_test.py .s.s.....s.s.....s.s.....s.s.....s [ 45%]
+.s.....s.s....sssssssssssssssssssssssssF                                 [100%]
+
+=================================== FAILURES ===================================
+__________________________ test_channel_wise_indexing __________________________
+tests/operations/channel_wise_test.py:289: in test_channel_wise_indexing
+    torch.testing.assert_close(Igrad3, grad3, atol=1e-5, rtol=1e-5)
+E   AssertionError: Tensor-likes are not close!
+E   
+E   Mismatched elements: 32 / 32 (100.0%)
+E   Greatest absolute difference: 282.43816162749556 at index (0, 24) (up to 1e-05 allowed)
+E   Greatest relative difference: 3419.03781676132 at index (0, 4) (up to 1e-05 allowed)
+----------------------------- Captured stdout call -----------------------------
+<< fasteq cwtp forward cost: 21.887 ms >>
+<< fasteq cwtp forward cost: 0.592 ms >>
+uniform1d path, descriptor:u,u,,u sizes=32,32,4,32 num_segments=1,1,4,1 num_paths=1 u=32
+polynomial.operations:((Operation((0, 1, 2, 3)), u,u,,u sizes=32,32,4,32 num_segments=1,1,4,1 num_paths=1 u=32),)
+<< fasteq cwtp forward cost: 1.488 ms >>
+<< fasteq uniform1d fused backward-backward cost: 1.741 ms >>
+<< fasteq cwtp forward cost: 1.117 ms >>
+<< fasteq uniform1d fused backward-backward cost: 1.628 ms >>
+=============================== warnings summary ===============================
+tests/operations/channel_wise_test.py: 38 warnings
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/tp_channel_wise.py:157: DeprecationWarning: `use_fallback` is deprecated, please use `method` instead
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /home/malixian/repos/rocEquivarience/test-results/fasteq-comparison-20261029/cwtp-on.xml -
+=========================== short test summary info ============================
+SKIPPED [12] tests/operations/channel_wise_test.py:59: This method does not work for non-uniform irreps.
+SKIPPED [16] tests/operations/channel_wise_test.py:121: Skipping batch=1 test for speed
+SKIPPED [8] tests/operations/channel_wise_test.py:117: Skipping slow JIT compilation test
+SKIPPED [1] tests/operations/channel_wise_test.py:171: Skipping channel_wise_bwd_bwd test for speed - Covered by test_channel_wise_indexing
+FAILED tests/operations/channel_wise_test.py::test_channel_wise_indexing - As...
+============ 1 failed, 36 passed, 37 skipped, 38 warnings in 6.18s =============

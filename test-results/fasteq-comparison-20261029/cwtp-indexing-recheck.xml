@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.701" timestamp="2026-10-29T17:23:20.581546+08:00" hostname="gxn70"><testcase classname="tests.operations.channel_wise_test" name="test_channel_wise_indexing" time="0.655"><failure message="AssertionError: Tensor-likes are not close!&#10;&#10;Mismatched elements: 32 / 32 (100.0%)&#10;Greatest absolute difference: 338.21507930670475 at index (0, 30) (up to 1e-05 allowed)&#10;Greatest relative difference: 26456.540245992157 at index (0, 1) (up to 1e-05 allowed)">tests/operations/channel_wise_test.py:289: in test_channel_wise_indexing
+    torch.testing.assert_close(Igrad3, grad3, atol=1e-5, rtol=1e-5)
+E   AssertionError: Tensor-likes are not close!
+E   
+E   Mismatched elements: 32 / 32 (100.0%)
+E   Greatest absolute difference: 338.21507930670475 at index (0, 30) (up to 1e-05 allowed)
+E   Greatest relative difference: 26456.540245992157 at index (0, 1) (up to 1e-05 allowed)</failure></testcase></testsuite></testsuites>

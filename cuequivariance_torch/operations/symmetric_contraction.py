@@ -126,7 +126,7 @@ class SymmetricContraction(torch.nn.Module):
         original_mace: bool = False,
         use_fallback: Optional[bool] = None,
         method: Optional[str] = None,
-        use_fasteq: bool = False,
+        use_fasteq: bool = True,
     ):
         super().__init__()
 

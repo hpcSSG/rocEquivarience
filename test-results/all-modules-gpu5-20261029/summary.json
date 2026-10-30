@@ -1,0 +1,157 @@
+{
+  "gpu": 5,
+  "duration_seconds": 231.34,
+  "modules": {
+    "layers": {
+      "passed": 32,
+      "skipped": 7
+    },
+    "operations": {
+      "passed": 216,
+      "skipped": 521,
+      "failed": 1
+    },
+    "primitives": {
+      "skipped": 2139,
+      "passed": 290
+    }
+  },
+  "test_files": {
+    "tests.layers.batchnorm_test": {
+      "passed": 21
+    },
+    "tests.layers.tp_conv_fully_connected_test": {
+      "passed": 11,
+      "skipped": 7
+    },
+    "tests.operations.channel_wise_test": {
+      "passed": 36,
+      "skipped": 37,
+      "failed": 1
+    },
+    "tests.operations.fully_connected_test": {
+      "passed": 29,
+      "skipped": 52
+    },
+    "tests.operations.linear_test": {
+      "passed": 82,
+      "skipped": 253
+    },
+    "tests.operations.rotation_test": {
+      "passed": 4,
+      "skipped": 3
+    },
+    "tests.operations.spherical_harmonics_test": {
+      "passed": 56,
+      "skipped": 120
+    },
+    "tests.operations.symmetric_contraction_test": {
+      "skipped": 56,
+      "passed": 9
+    },
+    "tests.primitives.equivariant_tensor_product_test": {
+      "skipped": 136,
+      "passed": 78
+    },
+    "tests.primitives.primitive_export_test": {
+      "skipped": 5,
+      "passed": 12
+    },
+    "tests.primitives.segmented_polynomial_test": {
+      "passed": 173,
+      "skipped": 1092
+    },
+    "tests.primitives.symmetric_tensor_product_test": {
+      "skipped": 48,
+      "passed": 2
+    },
+    "tests.primitives.tensor_product_test": {
+      "skipped": 858
+    },
+    "tests.primitives.transpose_test": {
+      "passed": 22
+    },
+    "tests.primitives.triangle_test": {
+      "passed": 3
+    }
+  },
+  "coverage_by_module": {
+    "layers": {
+      "covered_lines": 159,
+      "num_statements": 189,
+      "missing_lines": 30
+    },
+    "operations": {
+      "covered_lines": 270,
+      "num_statements": 424,
+      "missing_lines": 154
+    },
+    "primitives": {
+      "covered_lines": 1033,
+      "num_statements": 1588,
+      "missing_lines": 555
+    }
+  },
+  "coverage_totals": {
+    "covered_lines": 1462,
+    "num_statements": 2201,
+    "percent_covered": 66.42435256701499,
+    "percent_covered_display": "66",
+    "missing_lines": 739,
+    "excluded_lines": 0
+  },
+  "failures": [
+    {
+      "test": "tests.operations.channel_wise_test::test_channel_wise_indexing",
+      "message": "AssertionError: Tensor-likes are not close!\n\nMismatched elements: 32 / 32 (100.0%)\nGreatest absolute difference: 312.74222534977093 at index (0, 24) (up to 1e-05 allowed)\nGreatest relative difference: 35076493.788248554 at index (0, 20) (up to 1e-05 allowed)"
+    }
+  ],
+  "skip_reasons": {
+    "Skipping redundant layout test": 32,
+    "Skipping complex MLP test without batch_norm": 1,
+    "This method does not work for non-uniform irreps.": 12,
+    "Skipping batch=1 test for speed": 32,
+    "Skipping slow JIT compilation test": 262,
+    "Skipping channel_wise_bwd_bwd test for speed - Covered by test_channel_wise_indexing": 1,
+    "Skipping float32 test for fallback=False (fused_tp)": 4,
+    "Skipping compile mode for speed - takes 1+ seconds": 78,
+    "Skipping redundant layout test with fallback=True": 44,
+    "Skipping script mode for speed": 102,
+    "Skipping complex irreps combination for speed": 9,
+    "Skipping non-shared weights test for speed": 9,
+    "Skipping complex irreps combinations for speed": 16,
+    "Skipping shared_weights=False for speed": 18,
+    "Skipping use_fallback=False for speed": 72,
+    "fused_tp does not support float32 math_dtype with FP64 inputs": 1,
+    "indexed_linear does not support non-None or CUBLAS math_dtype": 2,
+    "Skipping all rotation export tests for speed - they take 10+ seconds each": 3,
+    "Skipping compile mode for speed": 26,
+    "Skipping fp16/bf16 tests with CUDA backend": 20,
+    "Skipping high degree multi-l tests for speed": 12,
+    "Skipping symmetric contraction test for speed - takes 1.3+ seconds": 16,
+    "Skipping mixed precision performance tests for speed": 4,
+    "Skipping fp16/bf16 performance tests for speed": 8,
+    "Skipping compile mode for speed - takes 1.5+ seconds": 40,
+    "Skipping script mode for speed - takes 1+ seconds": 40,
+    "Skipping high degrees test for speed - takes 2+ seconds": 4,
+    "This is deprecated and will be removed soon.": 3,
+    "ONNX not available!": 2,
+    "Skipping fused TP for symmetric contraction: unsupported": 4,
+    "Skipping tests with many options that are not default": 1048,
+    "Skipping fused TP for float32 math_dtype with float64 inputs": 12,
+    "torch.jit.trace does not work with inline autograd": 3,
+    "Skipping export mode for naive method": 1,
+    "Linear is not supported for uniform_1d": 16,
+    "indexed_linear does not support math_dtype": 8,
+    "Skipping batch_size=0 test for speed": 14,
+    "Skipping float64 tests for speed": 2,
+    "Skipping complex descriptor combinations for speed": 2,
+    "Skipping mixed precision tests for speed": 4,
+    "Skipping fp16/bf16 tests for speed": 12,
+    "Skipping fallback=True tests for speed": 2,
+    "Skipping slow compile mode with fallback=True": 2,
+    "Skipping script mode for speed - takes 2+ seconds": 4,
+    "Skipping d3 and degree 3 tests for speed - they take 5+ seconds each": 640,
+    "Skipping complex descriptors d29-d32 for speed - they take 1.3+ seconds each": 20
+  }
+}

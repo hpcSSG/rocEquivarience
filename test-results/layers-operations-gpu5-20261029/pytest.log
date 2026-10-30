@@ -1,0 +1,216 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.18, pytest-8.3.4, pluggy-1.5.0
+rootdir: /home/malixian/repos/rocEquivarience
+configfile: pyproject.toml
+plugins: cov-6.0.0
+collected 777 items
+
+tests/layers/batchnorm_test.py .....................                     [  2%]
+tests/layers/tp_conv_fully_connected_test.py .sss.s.s.s.s......          [  5%]
+tests/operations/channel_wise_test.py .s.s.....s.s.....s.s.....s.s.....s [  9%]
+.s.....s.s....sssssssssssssssssssssssssF                                 [ 14%]
+tests/operations/fully_connected_test.py ........ssss............sssssss [ 18%]
+sssssssssssssssssssssssssssssssssssssssss.........                       [ 24%]
+tests/operations/linear_test.py ....................................ssss [ 30%]
+ssssssssssssssssssssssssssssssss.......................................s [ 39%]
+ssssssssssssssssssssssssssssssssss.sssssssssssssssssssssssssssssssssssss [ 48%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 57%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss.. [ 67%]
+..ss..s                                                                  [ 68%]
+tests/operations/rotation_test.py ....sss                                [ 68%]
+tests/operations/spherical_harmonics_test.py ........................... [ 72%]
+.............................sssssssssssssssssssssssssssssssssssssssssss [ 81%]
+ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss [ 90%]
+sssss                                                                    [ 91%]
+tests/operations/symmetric_contraction_test.py ssssssssssssssss.ssssssss [ 94%]
+ss..ss..ssssssssss..ss..ssssssssssssssss/public-data/malixian/conda/fasteq/lib/python3.10/site-packages/coverage/inorout.py:524: CoverageWarning: Module cuequivariance_torch.layers was previously imported, but not measured (module-not-measured)
+  self.warn(msg, slug="module-not-measured")
+                                 [100%]
+
+=================================== FAILURES ===================================
+__________________________ test_channel_wise_indexing __________________________
+
+    def test_channel_wise_indexing():
+        if not torch.cuda.is_available():
+            pytest.skip("CUDA is not available")
+    
+        irreps1 = cue.Irreps("SO3", "32x0")
+        irreps2 = cue.Irreps("SO3", "0 + 1")
+        irreps3 = cue.Irreps("SO3", "32x0")
+    
+        x1 = torch.randn(
+            10, irreps1.dim, device=device, requires_grad=True, dtype=torch.float64
+        )
+        x2 = torch.randn(
+            32, irreps2.dim, device=device, requires_grad=True, dtype=torch.float64
+        )
+        indices = torch.randint(0, 10, (32,), device=device, dtype=torch.int64)
+    
+        outputs = {}
+        for use_fallback in [True, False]:
+            m = cuet.ChannelWiseTensorProduct(
+                irreps1,
+                irreps2,
+                irreps3,
+                shared_weights=True,
+                internal_weights=False,
+                layout=cue.ir_mul,
+                device="cuda",
+                dtype=torch.float64,
+                use_fallback=use_fallback,
+            )
+    
+            torch.manual_seed(0)
+            w = torch.randn(
+                1, m.weight_numel, device="cuda", requires_grad=True, dtype=torch.float64
+            )
+    
+            (grad1, grad2, grad3) = torch.autograd.grad(
+                m(x1, x2, w, indices_1=indices, indices_out=indices, size_out=10)
+                .pow(2)
+                .sum(),
+                (x1, x2, w),
+                create_graph=True,
+            )
+            (ggrad1, ggrad2, ggrad3) = torch.autograd.grad(
+                grad1.pow(2).sum() + grad2.pow(2).sum() + grad3.pow(2).sum(),
+                (x1, x2, w),
+            )
+            outputs[use_fallback] = (ggrad1, ggrad2, ggrad3)
+    
+            out_edge = m(x1[indices], x2, w)
+            out = torch.zeros(
+                [10, out_edge.shape[-1]], device=device, dtype=out_edge.dtype
+            ).scatter_add(0, indices.unsqueeze(1).expand_as(out_edge), out_edge)
+            (Igrad1, Igrad2, Igrad3) = torch.autograd.grad(
+                out.pow(2).sum(), (x1, x2, w), create_graph=True
+            )
+            (Iggrad1, Iggrad2, Iggrad3) = torch.autograd.grad(
+                Igrad1.pow(2).sum() + Igrad2.pow(2).sum() + Igrad3.pow(2).sum(),
+                (x1, x2, w),
+            )
+            torch.testing.assert_close(Igrad1, grad1, atol=1e-5, rtol=1e-5)
+            torch.testing.assert_close(Igrad2, grad2, atol=1e-5, rtol=1e-5)
+>           torch.testing.assert_close(Igrad3, grad3, atol=1e-5, rtol=1e-5)
+E           AssertionError: Tensor-likes are not close!
+E           
+E           Mismatched elements: 32 / 32 (100.0%)
+E           Greatest absolute difference: 294.24541877299635 at index (0, 24) (up to 1e-05 allowed)
+E           Greatest relative difference: 19535.683630824748 at index (0, 30) (up to 1e-05 allowed)
+
+tests/operations/channel_wise_test.py:289: AssertionError
+----------------------------- Captured stdout call -----------------------------
+<< fasteq cwtp forward cost: 0.779 ms >>
+<< fasteq cwtp forward cost: 1.084 ms >>
+uniform1d path, descriptor:u,u,,u sizes=32,32,4,32 num_segments=1,1,4,1 num_paths=1 u=32
+polynomial.operations:((Operation((0, 1, 2, 3)), u,u,,u sizes=32,32,4,32 num_segments=1,1,4,1 num_paths=1 u=32),)
+<< fasteq cwtp forward cost: 1.597 ms >>
+<< fasteq uniform1d fused backward-backward cost: 1.871 ms >>
+<< fasteq cwtp forward cost: 1.296 ms >>
+<< fasteq uniform1d fused backward-backward cost: 1.676 ms >>
+=============================== warnings summary ===============================
+tests/layers/tp_conv_fully_connected_test.py: 5 warnings
+tests/operations/fully_connected_test.py: 21 warnings
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/tp_fully_connected.py:122: DeprecationWarning: `use_fallback` is deprecated, please use `method` instead
+    warnings.warn(
+
+tests/operations/channel_wise_test.py: 38 warnings
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/tp_channel_wise.py:157: DeprecationWarning: `use_fallback` is deprecated, please use `method` instead
+    warnings.warn(
+
+tests/operations/fully_connected_test.py: 11 warnings
+  /public-data/malixian/conda/fasteq/lib/python3.10/site-packages/cuequivariance/group_theory/irreps_array/misc_ui.py:25: UserWarning: layout is not specified, defaulting to cue.mul_ir. This is the layout used in the e3nn library. We use it as the default layout for compatibility with e3nn. However, the cue.ir_mul layout is faster and more memory efficient. Please specify the layout explicitly to avoid this warning.
+    warnings.warn(
+
+tests/operations/linear_test.py: 74 warnings
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/linear.py:128: DeprecationWarning: `use_fallback` is deprecated, please use `method` instead
+    warnings.warn(
+
+tests/operations/rotation_test.py::test_rotation
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/rotation.py:98: UserWarning: Segments are not the same shape, falling back to naive method
+  You can consider making the segments uniform in the descriptor.
+    warnings.warn(
+
+tests/operations/rotation_test.py::test_inversion[False]
+tests/operations/rotation_test.py::test_inversion[True]
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/rotation.py:283: DeprecationWarning: `use_fallback` is deprecated, please use `method` instead
+    warnings.warn(
+
+tests/operations/spherical_harmonics_test.py: 56 warnings
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/spherical_harmonics.py:62: DeprecationWarning: `use_fallback` is deprecated, please use `method` instead
+    warnings.warn(
+
+tests/operations/symmetric_contraction_test.py::test_mace_compatibility
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/symmetric_contraction.py:196: DeprecationWarning: `use_fallback` is deprecated, please use `method` instead
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+- generated xml file: /home/malixian/repos/rocEquivarience/test-results/layers-operations-gpu5-20261029/junit.xml -
+
+---------- coverage: platform linux, python 3.10.18-final-0 ----------
+Name                                                       Stmts   Miss  Cover   Missing
+----------------------------------------------------------------------------------------
+cuequivariance_torch/layers/__init__.py                        3      3     0%   15-18
+cuequivariance_torch/layers/batchnorm.py                     113     11    90%   16-45, 94, 97, 100, 137, 165
+cuequivariance_torch/layers/tp_conv_fully_connected.py        73     16    78%   15-98, 156, 198, 206, 213, 221, 243, 253, 258
+cuequivariance_torch/operations/linear.py                     63     19    70%   16-56, 89, 96, 156-159, 190, 196, 203, 219
+cuequivariance_torch/operations/rotation.py                   94     32    66%   15-48, 64, 104-120, 128, 161, 180, 212-230, 246, 273-281, 288, 294-299, 307
+cuequivariance_torch/operations/spherical_harmonics.py        27     13    52%   15-29, 60, 68, 76, 90
+cuequivariance_torch/operations/symmetric_contraction.py      87     40    54%   16-113, 138, 190-194, 201, 207-212, 241, 250-268, 294-299, 304-305, 316
+cuequivariance_torch/operations/tp_channel_wise.py            92     34    63%   16-61, 111, 147-155, 162, 168-173, 195-203, 245, 249, 259, 264, 284-297
+cuequivariance_torch/operations/tp_fully_connected.py         61     16    74%   16-63, 110, 120, 177-184, 214, 217
+----------------------------------------------------------------------------------------
+TOTAL                                                        613    184    70%
+Coverage HTML written to dir test-results/layers-operations-gpu5-20261029/html
+Coverage JSON written to file test-results/layers-operations-gpu5-20261029/coverage.json
+
+============================= slowest 15 durations =============================
+4.24s call     tests/operations/rotation_test.py::test_rotation
+3.35s call     tests/operations/symmetric_contraction_test.py::test_export[compile-32-True-(mul,irrep)-dtype0-math_dtype0-1e-10-1e-10]
+2.22s call     tests/operations/symmetric_contraction_test.py::test_export[compile-32-True-(mul,irrep)-dtype1-float32-1e-05-1e-05]
+2.17s call     tests/operations/linear_test.py::test_export[True-compile-True-(mul,irrep)-irreps_out0-irreps_in0]
+1.13s call     tests/layers/tp_conv_fully_connected_test.py::test_tensor_product_conv_equivariance[mlp_channels0-mlp_activation0-scalar_sizes0-True-(mul,irrep)]
+1.11s call     tests/operations/spherical_harmonics_test.py::test_spherical_harmonics_equivariance[False-3-dtype0-1e-05]
+0.96s call     tests/operations/spherical_harmonics_test.py::test_spherical_harmonics_equivariance[False-2-dtype0-1e-05]
+0.85s call     tests/operations/spherical_harmonics_test.py::test_spherical_harmonics_full[False-ls4-dtype1]
+0.80s call     tests/operations/symmetric_contraction_test.py::test_export[compile-32-False-(mul,irrep)-dtype0-math_dtype0-1e-10-1e-10]
+0.80s call     tests/operations/spherical_harmonics_test.py::test_spherical_harmonics_full[False-ls4-dtype3]
+0.79s call     tests/operations/spherical_harmonics_test.py::test_spherical_harmonics_full[False-ls4-dtype2]
+0.79s call     tests/operations/symmetric_contraction_test.py::test_export[compile-32-False-(mul,irrep)-dtype1-float32-1e-05-1e-05]
+0.76s call     tests/operations/spherical_harmonics_test.py::test_spherical_harmonics_equivariance[False-3-dtype1-0.0001]
+0.75s call     tests/operations/spherical_harmonics_test.py::test_spherical_harmonics_full[False-ls4-dtype0]
+0.71s call     tests/operations/spherical_harmonics_test.py::test_spherical_harmonics_full[False-ls2-dtype3]
+=========================== short test summary info ============================
+SKIPPED [6] tests/layers/tp_conv_fully_connected_test.py:42: Skipping redundant layout test
+SKIPPED [1] tests/layers/tp_conv_fully_connected_test.py:46: Skipping complex MLP test without batch_norm
+SKIPPED [12] tests/operations/channel_wise_test.py:59: This method does not work for non-uniform irreps.
+SKIPPED [16] tests/operations/channel_wise_test.py:121: Skipping batch=1 test for speed
+SKIPPED [8] tests/operations/channel_wise_test.py:117: Skipping slow JIT compilation test
+SKIPPED [1] tests/operations/channel_wise_test.py:171: Skipping channel_wise_bwd_bwd test for speed - Covered by test_channel_wise_indexing
+SKIPPED [4] tests/operations/fully_connected_test.py:59: Skipping float32 test for fallback=False (fused_tp)
+SKIPPED [12] tests/operations/fully_connected_test.py:122: Skipping compile mode for speed - takes 1+ seconds
+SKIPPED [8] tests/operations/fully_connected_test.py:118: Skipping redundant layout test with fallback=True
+SKIPPED [12] tests/operations/fully_connected_test.py:126: Skipping script mode for speed
+SKIPPED [16] tests/operations/fully_connected_test.py:114: Skipping slow JIT compilation test
+SKIPPED [9] tests/operations/linear_test.py:106: Skipping complex irreps combination for speed
+SKIPPED [18] tests/operations/linear_test.py:98: Skipping redundant layout test
+SKIPPED [9] tests/operations/linear_test.py:102: Skipping non-shared weights test for speed
+SKIPPED [16] tests/operations/linear_test.py:249: Skipping complex irreps combinations for speed
+SKIPPED [36] tests/operations/linear_test.py:229: Skipping redundant layout test with fallback=True
+SKIPPED [18] tests/operations/linear_test.py:245: Skipping shared_weights=False for speed
+SKIPPED [72] tests/operations/linear_test.py:225: Skipping slow JIT compilation test
+SKIPPED [72] tests/operations/linear_test.py:241: Skipping use_fallback=False for speed
+SKIPPED [1] tests/operations/linear_test.py:289: fused_tp does not support float32 math_dtype with FP64 inputs
+SKIPPED [2] tests/operations/linear_test.py:291: indexed_linear does not support non-None or CUBLAS math_dtype
+SKIPPED [3] tests/operations/rotation_test.py:84: Skipping all rotation export tests for speed - they take 10+ seconds each
+SKIPPED [24] tests/operations/spherical_harmonics_test.py:102: Skipping compile mode for speed
+SKIPPED [20] tests/operations/spherical_harmonics_test.py:94: Skipping fp16/bf16 tests with CUDA backend
+SKIPPED [12] tests/operations/spherical_harmonics_test.py:98: Skipping high degree multi-l tests for speed
+SKIPPED [24] tests/operations/spherical_harmonics_test.py:106: Skipping script mode for speed
+SKIPPED [40] tests/operations/spherical_harmonics_test.py:90: Skipping slow JIT compilation test
+SKIPPED [16] tests/operations/symmetric_contraction_test.py:41: Skipping symmetric contraction test for speed - takes 1.3+ seconds
+SKIPPED [16] tests/operations/symmetric_contraction_test.py:152: Skipping batch=1 test for speed
+SKIPPED [8] tests/operations/symmetric_contraction_test.py:156: Skipping redundant layout test
+SKIPPED [16] tests/operations/symmetric_contraction_test.py:148: Skipping slow JIT compilation test
+FAILED tests/operations/channel_wise_test.py::test_channel_wise_indexing - As...
+========== 1 failed, 248 passed, 528 skipped, 209 warnings in 55.07s ===========

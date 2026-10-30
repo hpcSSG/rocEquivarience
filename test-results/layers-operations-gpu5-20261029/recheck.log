@@ -1,0 +1,29 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________________________ test_channel_wise_indexing __________________________
+tests/operations/channel_wise_test.py:289: in test_channel_wise_indexing
+    torch.testing.assert_close(Igrad3, grad3, atol=1e-5, rtol=1e-5)
+E   AssertionError: Tensor-likes are not close!
+E   
+E   Mismatched elements: 32 / 32 (100.0%)
+E   Greatest absolute difference: 594.2682519834541 at index (0, 24) (up to 1e-05 allowed)
+E   Greatest relative difference: 34958.673698858955 at index (0, 12) (up to 1e-05 allowed)
+----------------------------- Captured stdout call -----------------------------
+<< fasteq cwtp forward cost: 88.650 ms >>
+<< fasteq cwtp forward cost: 0.364 ms >>
+uniform1d path, descriptor:u,u,,u sizes=32,32,4,32 num_segments=1,1,4,1 num_paths=1 u=32
+polynomial.operations:((Operation((0, 1, 2, 3)), u,u,,u sizes=32,32,4,32 num_segments=1,1,4,1 num_paths=1 u=32),)
+<< fasteq cwtp forward cost: 1.723 ms >>
+<< fasteq uniform1d fused backward-backward cost: 1.769 ms >>
+<< fasteq cwtp forward cost: 1.255 ms >>
+<< fasteq uniform1d fused backward-backward cost: 1.678 ms >>
+=============================== warnings summary ===============================
+tests/operations/channel_wise_test.py::test_channel_wise_indexing
+tests/operations/channel_wise_test.py::test_channel_wise_indexing
+  /home/malixian/repos/rocEquivarience/cuequivariance_torch/operations/tp_channel_wise.py:157: DeprecationWarning: `use_fallback` is deprecated, please use `method` instead
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/operations/channel_wise_test.py::test_channel_wise_indexing - As...
+1 failed, 2 warnings in 1.65s
